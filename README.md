@@ -1,2 +1,20 @@
 # Rock-Connect
-A fullstack social media web application for music artists and fans, made with NestJS, GraphQL an PostgreSQL. Client-side is created with Vue. Rock-Connect provides users to connect with each other and artists, viewing/creating posts and liking each others' content.
+Fullstack social media platform connecting music artists and fans, featuring post creation, content liking, and user networking capabilities. Built with modern technologies and containerized for easy deployment.
+
+
+## Features
+
+- User profiles and networking
+- Post creation
+- Content liking system
+- Authentication system
+- Coded exclusively with TypeScript
+
+
+## Tech Stack
+
+- Backend: NestJS + GraphQL API
+- Database: PostgreSQL w/ Prisma ORM
+- Containerization: Docker
+- Frontend: Vue.js
+- Code Quality: ESLint + Prettier
