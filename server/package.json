@@ -18,7 +18,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "migrate": "npx prisma migrate dev"
+    "migrate": "npx prisma migrate dev",
+    "database:studio": "npx prisma studio"
   },
   "dependencies": {
     "@apollo/server": "^4.11.3",
@@ -27,7 +28,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/graphql": "^13.0.3",
     "@nestjs/platform-express": "^11.0.1",
-    "@prisma/client": "6.4.1",
+    "@prisma/client": "^6.4.1",
     "graphql": "^16.10.0",
     "prisma": "^6.4.1",
     "reflect-metadata": "^0.2.2",
