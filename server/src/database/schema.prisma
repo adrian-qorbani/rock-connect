@@ -14,22 +14,55 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username    String
-  firstName String?
-  lastName  String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  posts     Post[]
+  id             Int       @id @default(autoincrement())
+  username       String    @unique
+  email          String    @unique
+  password       String
+  name           String?
+  bio            String?
+  profilePicture String?
+  posts          Post[]
+  comments       Comment[]
+  likes          Like[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 model Post {
-  id      Int    @id @default(autoincrement())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  title   String
-  content String
-  votes   Int?
-  user    User   @relation(fields: [userId], references: [id])
-  userId  Int
+  id        Int       @id @default(autoincrement())
+  content   String
+  mediaType String?
+  mediaURL  String?
+  user      User      @relation(fields: [userId], references: [id])
+  userId    Int
+  comments  Comment[]
+  likes     Like[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  likes     Like[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  post      Post?    @relation(fields: [postId], references: [id])
+  postId    Int?
+  comment   Comment? @relation(fields: [commentId], references: [id])
+  commentId Int?
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+  @@unique([userId, commentId])
 }
