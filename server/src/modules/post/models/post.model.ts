@@ -17,10 +17,7 @@ export class Post {
 
   @Field(() => String)
   content: PostDB[`content`];
-
-  @Field(() => Int)
-  votes?: PostDB[`votes`];
-
+  
   @Field(() => Int)
   userId: PostDB[`userId`];
 }
