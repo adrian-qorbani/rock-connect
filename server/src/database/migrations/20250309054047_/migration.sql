@@ -16,6 +16,7 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Post" (
     "id" SERIAL NOT NULL,
+    "title" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "mediaType" TEXT,
     "mediaURL" TEXT,
