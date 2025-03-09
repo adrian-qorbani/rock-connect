@@ -21,4 +21,15 @@ export class PostRepository {
     const { data } = params;
     return this.prisma.post.create({ data });
   }
+
+  async updatePost(params: {
+    where: Prisma.PostWhereUniqueInput;
+    data: Prisma.PostUpdateInput;
+  }) {
+    return this.prisma.post.update(params);
+  }
+
+  async deletePost(params: { where: Prisma.PostWhereUniqueInput }) {
+    return this.prisma.post.delete(params);
+  }
 }

@@ -31,4 +31,27 @@ export class PostService {
     });
     return post;
   }
+
+  async editPost(params: { postId: number; title?: string; content?: string }) {
+    const { postId, content, title } = params;
+    const updatedPost = await this.repository.updatePost({
+      where: { id: postId },
+      data: {
+        title,
+        content,
+        updatedAt: new Date(),
+      },
+    });
+
+    return updatedPost;
+  }
+
+  async deletePost(params: { postId: number }) {
+    const { postId } = params;
+    const deletedPost = await this.repository.deletePost({
+      where: { id: postId },
+    });
+
+    return deletedPost
+  }
 }

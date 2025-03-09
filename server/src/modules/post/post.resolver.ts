@@ -19,4 +19,19 @@ export class PostResolver {
   ) {
     return this.postService.createPost({ title, content, userId });
   }
+
+  @Mutation(() => Post)
+  async editPost(
+    @Args({ name: `id`, type: () => Int, nullable: true }) postId: number,
+    @Args({ name: `title`, type: () => String, nullable: true }) title?: string,
+    @Args({ name: `content`, type: () => String, nullable: true })
+    content?: string,
+  ) {
+    return this.postService.editPost({ postId, title, content });
+  }
+
+  @Mutation(() => Post)
+  async deletePost(@Args({ name: `postId`, type: () => Int }) postId: number) {
+    return this.postService.deletePost({ postId });
+  }
 }
