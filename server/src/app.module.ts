@@ -8,6 +8,7 @@ import { UserModule } from './modules/user/user.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { CacheManagerModule } from './modules/cache/cache.module';
+import { AuthModule } from './modules/auth/auth.module';
 import config from './common/config/config'
 
 @Module({
@@ -25,6 +26,7 @@ import config from './common/config/config'
     CommonModule,
     PostModule,
     UserModule,
+    AuthModule,
   ],
 })
 export class AppModule implements NestModule {
