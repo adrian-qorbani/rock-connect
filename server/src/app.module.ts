@@ -6,14 +6,16 @@ import { CommonModule } from './common/common.module';
 import { PostModule } from './modules/post/post.module';
 import { UserModule } from './modules/user/user.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
-import { CacheModule } from '@nestjs/cache-manager';
-import { redisStore } from 'cache-manager-redis-store';
 import { ConfigModule } from '@nestjs/config';
 import { CacheManagerModule } from './modules/cache/cache.module';
+import config from './common/config/config'
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [config]
+    }),
     CacheManagerModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
