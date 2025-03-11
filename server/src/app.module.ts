@@ -10,6 +10,9 @@ import { ConfigModule } from '@nestjs/config';
 import { CacheManagerModule } from './modules/cache/cache.module';
 import { AuthModule } from './modules/auth/auth.module';
 import config from './common/config/config'
+import { APP_GUARD } from '@nestjs/core';
+import { JwtGuard } from './modules/auth/guards/jwt-auth.guard';
+import { JwtStrategy } from './modules/auth/strategy/jwt.strategy';
 
 @Module({
   imports: [
@@ -27,6 +30,13 @@ import config from './common/config/config'
     PostModule,
     UserModule,
     AuthModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtGuard,
+    },
+    JwtStrategy,
   ],
 })
 export class AppModule implements NestModule {
