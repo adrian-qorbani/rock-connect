@@ -24,6 +24,7 @@ import { JwtStrategy } from './modules/auth/strategy/jwt.strategy';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      // context: ({ req, res }) => ({ req, res }),
       // autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
     CommonModule,
@@ -34,7 +35,7 @@ import { JwtStrategy } from './modules/auth/strategy/jwt.strategy';
   providers: [
     {
       provide: APP_GUARD,
-      useClass: JwtGuard,
+      useClass: JwtGuard
     },
     JwtStrategy,
   ],

@@ -2,9 +2,9 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { AuthResponse } from './dto/auth.response';
 import { AuthInput } from './dto/auth.input';
-import { Public } from 'src/common/decorator/public.decorator';
+import { IsPublic } from 'src/common/decorator/public.decorator';
 
-@Public()
+@IsPublic()
 @Resolver()
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}

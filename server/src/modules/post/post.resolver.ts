@@ -1,6 +1,5 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Public } from 'src/common/decorator/public.decorator';
-import { User } from 'src/common/decorator/user.decorator';
+import { IsPublic } from 'src/common/decorator/public.decorator';
 import { Post } from 'src/modules/post/models/post.model';
 import { PostService } from 'src/modules/post/post.service';
 
@@ -8,7 +7,6 @@ import { PostService } from 'src/modules/post/post.service';
 export class PostResolver {
   constructor(private readonly postService: PostService) {}
 
-  @Public()
   @Query(() => [Post])
   async getPosts() {
     return this.postService.getPosts();

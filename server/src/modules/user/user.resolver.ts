@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { User } from './models/user.model';
 import { CreateUserInput } from './dto/create-user.input';
 import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
+import { IsPublic } from 'src/common/decorator/public.decorator';
 
 @Resolver()
 export class UserResolver {
@@ -14,7 +14,6 @@ export class UserResolver {
     return this.userService.getUser({ userId });
   }
 
-  @UseGuards(GqlAuthGuard)
   @Query(() => [User])
   async getAllUsers() {
     return this.userService.getUsers();
@@ -34,6 +33,7 @@ export class UserResolver {
     return this.userService.deleteUser({ userId });
   }
 
+  @IsPublic()
   @Mutation(() => User)
   async createUser(
     @Args('createUserInput') createUserInput: CreateUserInput,
