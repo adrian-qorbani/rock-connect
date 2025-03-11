@@ -1,7 +1,10 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { User } from '@prisma/client';
 import { IsPublic } from 'src/common/decorator/public.decorator';
+import { CurrentUser } from 'src/common/decorator/user.decorator';
 import { Post } from 'src/modules/post/models/post.model';
 import { PostService } from 'src/modules/post/post.service';
+import { CreatePostInput } from './dto/create-post.input';
 
 @Resolver()
 export class PostResolver {
@@ -14,27 +17,13 @@ export class PostResolver {
 
   @Mutation(() => Post)
   async createPost(
-    // @User()
-    @Args({ name: `title`, type: () => String })
-    title: string,
-    @Args({ name: `content`, type: () => String }) content: string,
-    @Args({ name: `userId`, type: () => Int }) userId: number,
+    @Args('createPostInput') createPostInput: CreatePostInput,
+    @CurrentUser() user: User,
   ) {
-    return this.postService.createPost({ title, content, userId });
-  }
-
-  @Mutation(() => Post)
-  async editPost(
-    @Args({ name: `id`, type: () => Int, nullable: true }) postId: number,
-    @Args({ name: `title`, type: () => String, nullable: true }) title?: string,
-    @Args({ name: `content`, type: () => String, nullable: true })
-    content?: string,
-  ) {
-    return this.postService.editPost({ postId, title, content });
-  }
-
-  @Mutation(() => Post)
-  async deletePost(@Args({ name: `postId`, type: () => Int }) postId: number) {
-    return this.postService.deletePost({ postId });
+    return this.postService.createPost({
+      title: createPostInput.title,
+      content: createPostInput.content,
+      username: user.username,
+    });
   }
 }

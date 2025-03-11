@@ -14,9 +14,9 @@ export class PostService {
   async createPost(params: {
     title: Post['title'];
     content: Post[`content`];
-    userId: User[`id`];
+    username: User[`username`];
   }) {
-    const { title, content, userId } = params;
+    const { title, content, username } = params;
 
     const post = await this.repository.createPost({
       data: {
@@ -24,7 +24,7 @@ export class PostService {
         content,
         user: {
           connect: {
-            id: userId,
+            username: username,
           },
         },
       },
