@@ -34,4 +34,9 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
     };
   }
+
+  async logout(): Promise<{ message: string }> {
+    // to-do
+    return { message: 'Logout successful' };
+  }
 }

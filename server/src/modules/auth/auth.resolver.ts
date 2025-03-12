@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { AuthResponse } from './dto/auth.response';
 import { AuthInput } from './dto/auth.input';
 import { IsPublic } from 'src/common/decorator/public.decorator';
+import { LogoutResponse } from './dto/logout.response';
 
 @IsPublic()
 @Resolver()
@@ -20,5 +21,10 @@ export class AuthResolver {
       throw new Error('User doesnt exist');
     }
     return this.authService.login(user);
+  }
+
+  @Mutation(() => LogoutResponse)
+  async logout() {
+    return this.authService.logout();
   }
 }
