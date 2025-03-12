@@ -13,6 +13,9 @@ import config from './common/config/config'
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './modules/auth/guards/jwt-auth.guard';
 import { JwtStrategy } from './modules/auth/strategy/jwt.strategy';
+import { LikeModule } from './modules/like/like.module';
+import { MediaModule } from './modules/media/media.module';
+import { CommentModule } from './modules/comment/comment.module';
 
 @Module({
   imports: [
@@ -31,6 +34,9 @@ import { JwtStrategy } from './modules/auth/strategy/jwt.strategy';
     PostModule,
     UserModule,
     AuthModule,
+    LikeModule,
+    MediaModule,
+    CommentModule,
   ],
   providers: [
     {
