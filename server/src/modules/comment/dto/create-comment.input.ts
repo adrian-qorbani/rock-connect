@@ -6,5 +6,5 @@ export class CreateCommentInput {
   content: string;
 
   @Field()
-  postId: number;
+  postUuid: string;
 }

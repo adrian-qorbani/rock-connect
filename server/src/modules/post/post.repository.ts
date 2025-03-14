@@ -17,6 +17,13 @@ export class PostRepository {
     return this.prisma.post.findMany({ skip, take, cursor, where, orderBy });
   }
 
+  async getPost(params: {
+    where: Prisma.PostWhereInput;
+  }): Promise<Post | null> {
+    const { where } = params;
+    return this.prisma.post.findFirst({ where });
+  }
+
   async createPost(params: { data: Prisma.PostCreateInput }): Promise<Post> {
     const { data } = params;
     return this.prisma.post.create({ data });

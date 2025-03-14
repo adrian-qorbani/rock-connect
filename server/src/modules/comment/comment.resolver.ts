@@ -27,7 +27,7 @@ export class CommentResolver {
   ) {
     return this.commentService.createComment({
       content: createCommentInput.content,
-      postId: createCommentInput.postId,
+      postUuid: createCommentInput.postUuid,
       username: user.username,
     });
   }

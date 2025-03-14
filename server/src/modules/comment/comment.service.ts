@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { CommentRepository } from './comment.repository';
 import { Comment, Post, User } from '@prisma/client';
+import { PostRepository } from '../post/post.repository';
 
 @Injectable()
 export class CommentService {
-  constructor(private repository: CommentRepository) {}
+  constructor(
+    private repository: CommentRepository,
+    private postRepository: PostRepository,
+  ) {}
 
   async getCommentsByPost(postUuid: Post['uuid']) {
     const comments = await this.repository.getComments({
@@ -36,10 +40,18 @@ export class CommentService {
 
   async createComment(params: {
     content: Comment[`content`];
-    postId: Post['id'];
+    postUuid: Post['uuid'];
     username: User[`username`];
   }) {
-    const { content, username, postId } = params;
+    const { content, username, postUuid } = params;
+
+    const currentPost = await this.postRepository.getPost({
+      where: { uuid: postUuid },
+    });
+
+    if (!currentPost) {
+      throw new Error('Post not found');
+    }
 
     const comment = await this.repository.createComment({
       data: {
@@ -51,7 +63,7 @@ export class CommentService {
         },
         post: {
           connect: {
-            id: postId,
+            id: currentPost.id,
           },
         },
       },
