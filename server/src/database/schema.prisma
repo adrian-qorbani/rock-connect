@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"] // for container deployment
@@ -16,6 +10,7 @@ datasource db {
 
 model User {
   id             Int       @id @default(autoincrement())
+  uuid           String    @default(uuid()) @db.Uuid
   username       String    @unique
   email          String    @unique
   password       String
@@ -33,6 +28,7 @@ model User {
 
 model Post {
   id        Int       @id @default(autoincrement())
+  uuid      String    @default(uuid()) @db.Uuid
   title     String
   content   String
   mediaType String?
@@ -47,6 +43,7 @@ model Post {
 
 model Comment {
   id        Int      @id @default(autoincrement())
+  uuid      String   @default(uuid()) @db.Uuid
   content   String
   post      Post     @relation(fields: [postId], references: [id])
   postId    Int
@@ -59,6 +56,7 @@ model Comment {
 
 model Like {
   id        Int      @id @default(autoincrement())
+  uuid      String   @default(uuid()) @db.Uuid
   post      Post?    @relation(fields: [postId], references: [id])
   postId    Int?
   comment   Comment? @relation(fields: [commentId], references: [id])
