@@ -7,6 +7,9 @@ export class User {
   id: UserDB[`id`];
 
   @Field(() => String)
+  uuid: UserDB[`uuid`];
+
+  @Field(() => String)
   username: UserDB[`username`];
 
   @Field(() => GraphQLISODateTime)

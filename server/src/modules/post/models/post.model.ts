@@ -6,6 +6,9 @@ export class Post {
   @Field(() => Int)
   id: PostDB[`id`];
 
+  @Field(() => String)
+  uuid: PostDB[`uuid`];
+
   @Field(() => GraphQLISODateTime)
   createdAt: PostDB[`createdAt`];
 
