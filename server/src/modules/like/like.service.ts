@@ -24,6 +24,7 @@ export class LikeService {
     });
   }
 
+  // to-do: soft delete
   async addOrRemoveLike(
     postUuid: Post['uuid'],
     username: User['username'],
