@@ -5,6 +5,8 @@ import { CurrentUser } from 'src/common/decorator/user.decorator';
 import { Post } from 'src/modules/post/models/post.model';
 import { PostService } from 'src/modules/post/post.service';
 import { CreatePostInput } from './dto/create-post.input';
+import { GetToggleLikePostInput } from './dto/get-toggle-like-post.input';
+import { LikeModel } from '../like/models/like.model';
 
 @Resolver()
 export class PostResolver {
@@ -25,5 +27,16 @@ export class PostResolver {
       content: createPostInput.content,
       username: user.username,
     });
+  }
+
+  @Mutation(() => LikeModel)
+  async togglePostLike(
+    @Args('getToggleLikePostInput') getToggleLikePostInput: GetToggleLikePostInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.postService.togglePostLike({
+      postUuid: getToggleLikePostInput.postUuid,
+      username: user.username
+    })
   }
 }

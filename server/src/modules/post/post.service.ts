@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { PostRepository } from './post.repository';
 import { Post, User } from '@prisma/client';
+import { LikeService } from '../like/like.service';
 
 @Injectable()
 export class PostService {
-  constructor(private repository: PostRepository) {}
+  constructor(
+    private postRepository: PostRepository,
+    private likeService: LikeService,
+  ) {}
 
   async getPosts() {
-    const posts = this.repository.getPosts({});
+    const posts = this.postRepository.getPosts({});
     return posts;
   }
 
@@ -18,7 +22,7 @@ export class PostService {
   }) {
     const { title, content, username } = params;
 
-    const post = await this.repository.createPost({
+    const post = await this.postRepository.createPost({
       data: {
         title,
         content,
@@ -34,7 +38,7 @@ export class PostService {
 
   async editPost(params: { postId: number; title?: string; content?: string }) {
     const { postId, content, title } = params;
-    const updatedPost = await this.repository.updatePost({
+    const updatedPost = await this.postRepository.updatePost({
       where: { id: postId },
       data: {
         title,
@@ -48,10 +52,24 @@ export class PostService {
 
   async deletePost(params: { postId: number }) {
     const { postId } = params;
-    const deletedPost = await this.repository.deletePost({
+    const deletedPost = await this.postRepository.deletePost({
       where: { id: postId },
     });
 
-    return deletedPost
+    return deletedPost;
+  }
+
+  async togglePostLike(params: {
+    postUuid: Post['uuid'];
+    username: User['username'];
+  }) {
+    console.log("init")
+    const { postUuid, username } = params;
+    console.log("init with:", `${postUuid} and ${username}`)
+    const updatePostLike = await this.likeService.addOrRemoveLike(
+      postUuid,
+      username,
+    );
+    return updatePostLike;
   }
 }
