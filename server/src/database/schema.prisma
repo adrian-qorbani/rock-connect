@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"] // for container deployment
 }
 
@@ -24,6 +24,7 @@ model User {
   following      User[]    @relation("UserFollows")
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+  media          Media[]
 }
 
 model Post {
@@ -31,8 +32,7 @@ model Post {
   uuid      String    @default(uuid()) @db.Uuid
   title     String
   content   String
-  mediaType String?
-  mediaURL  String?
+  media     Media[]
   user      User      @relation(fields: [userId], references: [id])
   userId    Int
   comments  Comment[]
@@ -67,4 +67,17 @@ model Like {
 
   @@unique([userId, postId])
   @@unique([userId, commentId])
+}
+
+model Media {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @default(uuid()) @db.Uuid
+  url       String
+  type      String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  postId    Int?
+  post      Post?    @relation(fields: [postId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

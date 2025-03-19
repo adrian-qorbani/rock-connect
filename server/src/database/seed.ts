@@ -19,14 +19,10 @@ async function main() {
           {
             title: 'The Force is Strong',
             content: 'I’ve been training with Master Yoda. The Force is more powerful than I ever imagined!',
-            mediaType: 'image',
-            mediaURL: 'https://example.com/force.jpg',
           },
           {
             title: 'My New Lightsaber',
             content: 'Just built my new green lightsaber. It’s perfect for defending the galaxy!',
-            mediaType: 'video',
-            mediaURL: 'https://example.com/lightsaber.mp4',
           },
         ],
       },
@@ -48,14 +44,10 @@ async function main() {
           {
             title: 'Rebel Alliance Update',
             content: 'The fight against the Empire continues. We need all the help we can get!',
-            mediaType: 'image',
-            mediaURL: 'https://example.com/rebel.jpg',
           },
           {
             title: 'Remember Alderaan',
             content: 'Today we honor those we lost. Alderaan will never be forgotten.',
-            mediaType: 'video',
-            mediaURL: 'https://example.com/alderaan.mp4',
           },
         ],
       },
@@ -77,14 +69,10 @@ async function main() {
           {
             title: 'Kessel Run Record',
             content: 'Just made the Kessel Run in less than 12 parsecs. Beat that!',
-            mediaType: 'image',
-            mediaURL: 'https://example.com/kessel.jpg',
           },
           {
             title: 'Chewie’s New Bowcaster',
             content: 'Chewie got a new bowcaster. He’s unstoppable now!',
-            mediaType: 'video',
-            mediaURL: 'https://example.com/chewie.mp4',
           },
         ],
       },
