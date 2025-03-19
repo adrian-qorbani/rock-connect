@@ -1,26 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
+import { PrismaService } from 'src/database/prisma.service';
 
 @Injectable()
 export class MediaService {
-  create(createMediaDto: CreateMediaDto) {
-    return 'This action adds a new media';
-  }
+  constructor(private prisma: PrismaService) {}
 
-  findAll() {
-    return `This action returns all media`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} media`;
-  }
-
-  update(id: number, updateMediaDto: UpdateMediaDto) {
-    return `This action updates a #${id} media`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} media`;
+  async uploadFile(file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('no file uploaded');
+    }
+    return { message: 'File uploaded successfully', filePath: file.path };
   }
 }
