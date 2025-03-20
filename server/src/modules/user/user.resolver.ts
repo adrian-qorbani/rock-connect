@@ -4,6 +4,7 @@ import { User } from './models/user.model';
 import { CreateUserInput } from './dto/create-user.input';
 import { IsPublic } from 'src/common/decorator/public.decorator';
 import { CurrentUser } from 'src/common/decorator/user.decorator';
+import { GetFollowerInput } from './dto/get-follower.input';
 
 @Resolver()
 export class UserResolver {
@@ -30,5 +31,27 @@ export class UserResolver {
     @Args('createUserInput') createUserInput: CreateUserInput,
   ): Promise<User> {
     return this.userService.createUser(createUserInput);
+  }
+
+  @Mutation(() => User)
+  async followUser(
+    @Args('getFollowerInput') getFollowerInput: GetFollowerInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.userService.followUser(
+      user.username,
+      getFollowerInput.username,
+    );
+  }
+
+  @Mutation(() => User)
+  async unfollowUser(
+    @Args('getFollowerInput') getFollowerInput: GetFollowerInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.userService.unfollowUser(
+      user.username,
+      getFollowerInput.username,
+    );
   }
 }

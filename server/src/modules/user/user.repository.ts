@@ -36,4 +36,29 @@ export class UserRepository {
   }) {
     return this.prisma.user.update(params);
   }
+
+  async followUser(
+    currentUserId: number,
+    toBeFollowedUserId: number,
+  ): Promise<User> {
+    return this.prisma.user.update({
+      where: { id: currentUserId },
+      data: {
+        following: {
+          connect: { id: toBeFollowedUserId },
+        },
+      },
+    });
+  }
+
+  async unfollowUser(followerId: number, followingId: number): Promise<User> {
+    return this.prisma.user.update({
+      where: { id: followerId },
+      data: {
+        following: {
+          disconnect: { id: followingId },
+        },
+      },
+    });
+  }
 }

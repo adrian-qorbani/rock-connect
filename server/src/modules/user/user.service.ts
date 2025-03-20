@@ -52,4 +52,49 @@ export class UserService {
 
     return user;
   }
+
+  async followUser(
+    currentUserUsername: string,
+    toBeFollowedUsername: string,
+  ): Promise<User> {
+    const currentUser = await this.getUser({
+      where: { username: currentUserUsername },
+    });
+
+    const targetUser = await this.getUser({
+      where: { username: toBeFollowedUsername },
+    });
+
+    if (!currentUser || !targetUser) {
+      throw new Error('User not found.');
+    }
+
+    if (currentUser.id === targetUser.id) {
+      throw new Error('You cannot follow yourself.');
+    }
+
+    return this.repository.followUser(currentUser.id, targetUser.id);
+  }
+
+  async unfollowUser(
+    currentUserUsername: string,
+    toBeUnFollowedUsername: string,
+  ): Promise<User> {
+    const currentUser = await this.getUser({
+      where: { username: currentUserUsername },
+    });
+
+    const targetUser = await this.getUser({
+      where: { username: toBeUnFollowedUsername },
+    });
+
+    if (!currentUser || !targetUser) {
+      throw new Error('User not found.');
+    }
+
+    if (currentUser.id === targetUser.id) {
+      throw new Error('You cannot follow yourself.');
+    }
+    return this.repository.unfollowUser(currentUser.id, targetUser.id);
+  }
 }
