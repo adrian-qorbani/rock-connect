@@ -58,11 +58,11 @@ export class UserService {
     toBeFollowedUsername: string,
   ): Promise<User> {
     const currentUser = await this.getUser({
-      where: { username: currentUserUsername },
+      username: currentUserUsername,
     });
 
     const targetUser = await this.getUser({
-      where: { username: toBeFollowedUsername },
+      username: toBeFollowedUsername,
     });
 
     if (!currentUser || !targetUser) {
@@ -81,11 +81,11 @@ export class UserService {
     toBeUnFollowedUsername: string,
   ): Promise<User> {
     const currentUser = await this.getUser({
-      where: { username: currentUserUsername },
+      username: currentUserUsername,
     });
 
     const targetUser = await this.getUser({
-      where: { username: toBeUnFollowedUsername },
+      username: toBeUnFollowedUsername,
     });
 
     if (!currentUser || !targetUser) {
@@ -93,7 +93,7 @@ export class UserService {
     }
 
     if (currentUser.id === targetUser.id) {
-      throw new Error('You cannot follow yourself.');
+      throw new Error('You cannot unfollow yourself.');
     }
     return this.repository.unfollowUser(currentUser.id, targetUser.id);
   }
