@@ -1,6 +1,6 @@
-// src/components/Login.tsx
 import React from "react";
 import { User } from "../../types/types";
+import styles from "../../styles/Login.module.css";
 
 interface LoginProps {
   onLogin: (user: User) => void;
@@ -14,7 +14,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div>
+    <div className={styles.login}>
       <h2>Login</h2>
       <button onClick={handleLogin}>Log in</button>
     </div>

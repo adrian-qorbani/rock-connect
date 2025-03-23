@@ -1,37 +1,25 @@
-// src/components/Navbar.tsx
 import React from "react";
 import { Link } from "react-router-dom";
 import { User } from "../../types/types";
+import styles from "../../styles/Navbar.module.css";
 
 interface NavbarProps {
   user: User | null;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ user }) => {
-  const padding = {
-    padding: "5px",
-  };
-
   return (
-    <div>
-      <Link style={padding} to="/">
-        Home
-      </Link>
-      <Link style={padding} to="/feed">
-        Feed
-      </Link>
-      <Link style={padding} to="/connections">
-        Friends
-      </Link>
-      <Link style={padding} to="/profile">
-        User Profile
-      </Link>
+    <div className={styles.navbar}>
+      <div>
+        <Link to="/">Home</Link>
+        <Link to="/feed">Feed</Link>
+        <Link to="/connections">Friends</Link>
+        <Link to="/profile">User Profile</Link>
+      </div>
       {user ? (
-        <em>Welcome, {user.name}.</em>
+        <div className={styles.welcome}>Welcome, {user.name}.</div>
       ) : (
-        <Link style={padding} to="/login">
-          Login
-        </Link>
+        <Link to="/login">Login</Link>
       )}
     </div>
   );

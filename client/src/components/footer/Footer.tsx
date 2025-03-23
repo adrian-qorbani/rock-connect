@@ -1,7 +1,8 @@
 import React from "react";
+import styles from "../../styles/Footer.module.css";
 
 const Footer: React.FC = () => (
-  <div>
+  <div className={styles.footer}>
     <i>Rock-Connect: Connecting Fans and Artists since 2025</i>
   </div>
 );

@@ -11,6 +11,7 @@ import Login from "./components/login/Login";
 import UserRoute from "./components/user-profile/UserRoute";
 import Navbar from "./components/navbar/Navbar";
 import Footer from "./components/footer/Footer";
+import styles from "./styles/App.module.css";
 
 const App: React.FC = () => {
   const [posts] = useState<Post[]>([
@@ -43,20 +44,26 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <Navbar user={user} />
-      <Routes>
-        <Route path="/feed" element={<Feed posts={posts} />} />
-        <Route path="/posts/:id" element={<PostDetail />} />
-        <Route path="/users/:username" element={<UserRoute users={currentUsers} />} />
-        <Route path="/users" element={<UserConnections />} />
-        <Route
-          path="/profile"
-          element={user ? <UserProfile /> : <Navigate replace to="/login" />}
-        />
-        <Route path="/login" element={<Login onLogin={login} />} />
-        <Route path="/" element={<Home />} />
-      </Routes>
-      <Footer />
+      <div className={styles.app}>
+        <Navbar user={user} />
+        <div className={styles.container}>
+          <main className={styles.main}>
+            <Routes>
+              <Route path="/feed" element={<Feed posts={posts} />} />
+              <Route path="/posts/:id" element={<PostDetail />} />
+              <Route path="/users/:username" element={<UserRoute users={currentUsers} />} />
+              <Route path="/users" element={<UserConnections />} />
+              <Route
+                path="/profile"
+                element={user ? <UserProfile /> : <Navigate replace to="/login" />}
+              />
+              <Route path="/login" element={<Login onLogin={login} />} />
+              <Route path="/" element={<Home />} />
+            </Routes>
+          </main>
+        </div>
+        <Footer />
+      </div>
     </Router>
   );
 };
