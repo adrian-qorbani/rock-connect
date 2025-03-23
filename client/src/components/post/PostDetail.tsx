@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Post } from "../../types/types";
-import styles from "../../styles/Post.module.css";
 
 const PostDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -29,7 +28,7 @@ const PostDetail: React.FC = () => {
   }
 
   return (
-    <div className={styles.postDetail}>
+    <div>
       <h2>{post.title}</h2>
       <p>Posted by {post.author} on {post.publishedAt}</p>
       <p>{post.content}</p>

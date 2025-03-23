@@ -1,7 +1,6 @@
 import React from "react";
-import styles from "../../styles/App.module.css"
 const Home: React.FC = () => (
-  <div className={styles.main}>
+  <div>
     <h2>Home</h2>
   </div>
 );

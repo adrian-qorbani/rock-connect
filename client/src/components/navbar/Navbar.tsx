@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { User } from "../../types/types";
-import styles from "../../styles/Navbar.module.css";
 
 interface NavbarProps {
   user: User | null;
@@ -9,7 +8,7 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ user }) => {
   return (
-    <div className={styles.navbar}>
+    <div>
       <div>
         <Link to="/">Home</Link>
         <Link to="/feed">Feed</Link>
@@ -17,7 +16,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
         <Link to="/profile">User Profile</Link>
       </div>
       {user ? (
-        <div className={styles.welcome}>Welcome, {user.name}.</div>
+        <div>Welcome, {user.name}.</div>
       ) : (
         <Link to="/login">Login</Link>
       )}

@@ -11,7 +11,6 @@ import Login from "./components/login/Login";
 import UserRoute from "./components/user-profile/UserRoute";
 import Navbar from "./components/navbar/Navbar";
 import Footer from "./components/footer/Footer";
-import styles from "./styles/App.module.css";
 
 const App: React.FC = () => {
   const [posts] = useState<Post[]>([
@@ -44,10 +43,10 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <div className={styles.app}>
+      <div>
         <Navbar user={user} />
-        <div className={styles.container}>
-          <main className={styles.main}>
+        <div>
+          <main>
             <Routes>
               <Route path="/feed" element={<Feed posts={posts} />} />
               <Route path="/posts/:id" element={<PostDetail />} />
