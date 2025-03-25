@@ -1,0 +1,71 @@
+services:
+  client:
+    build:
+      dockerfile: Dockerfile
+      context: ./client
+      target: development
+    volumes:
+      - ./client:/usr/src/app
+      - /usr/src/app/node_modules
+    command: yarn dev --host 0.0.0.0
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+    networks:
+      - app-network
+
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: ./server
+      target: development
+    volumes:
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public
+    command: yarn start:dev
+    ports:
+      - 3000:3000
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - app-network
+
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/data
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB:${POSTGRES_DB}
+      - POSTGRES_USER:${POSTGRES_USER}
+      - POSTGRES_PASSWORD:${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+volumes:
+  redis:
+    driver: local
+  postgres-db:
+
+networks:
+  app-network:
+    driver: bridge
