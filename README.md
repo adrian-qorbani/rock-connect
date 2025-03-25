@@ -20,8 +20,11 @@ Fullstack social media platform connecting music artists and fans, featuring pos
 ### Frontend  
 - React + Vite + TypeScript  
 
-### DevOps  
+### Infrastructure  
 - Docker (containerization)  
+- Nginx (reverse proxy & load balancer for production)  
+
+### Dev Tools 
 - ESLint + Prettier (code quality)  
 
 ## Prerequisites
