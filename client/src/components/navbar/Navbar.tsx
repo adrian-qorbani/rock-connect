@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { User } from "../../types/types";
-import { AppBar, Button, IconButton, Toolbar } from "@mui/material";
+import { AppBar, Button, Toolbar, Typography, Box } from "@mui/material";
 
 interface NavbarProps {
   user: User | null;
@@ -11,24 +11,45 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <IconButton edge="start" color="inherit" aria-label="menu"></IconButton>
         <Button color="inherit" component={Link} to="/">
-          home
+          Home
         </Button>
         <Button color="inherit" component={Link} to="/feed">
-          feed
+          Feed
         </Button>
-        <Button color="inherit" component={Link} to="/connections">
-          friends
-        </Button>
-        <Button color="inherit" component={Link} to="/profile">
-          user profile
-        </Button>
+        
+        {/* User-specific links */}
+        {user && (
+          <>
+            <Button color="inherit" component={Link} to="/connections">
+              Friends
+            </Button>
+            <Button color="inherit" component={Link} to="/profile">
+              Profile
+            </Button>
+          </>
+        )}
+
+        {/* Spacer to push login/user info to the right */}
+        <Box sx={{ flexGrow: 1 }} />
+
         {user ? (
-          <em>{user.name} logged in</em>
+          <Typography variant="body1" component="span" sx={{ color: 'inherit' }}>
+            Welcome, {user.name}
+          </Typography>
         ) : (
-          <Button color="inherit" component={Link} to="/login">
-            login
+          <Button 
+            color="inherit" 
+            component={Link} 
+            to="/login"
+            sx={{ 
+              marginLeft: 'auto',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.08)'
+              }
+            }}
+          >
+            Login
           </Button>
         )}
       </Toolbar>

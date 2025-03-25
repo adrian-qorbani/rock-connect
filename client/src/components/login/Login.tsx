@@ -1,38 +1,72 @@
-import React from "react";
+import React, { useState } from "react";
 import { User } from "../../types/types";
-import { Button, TextField } from "@mui/material";
-// import { useNavigate } from "react-router-dom";
+import { Button, TextField, Snackbar, Alert } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 interface LoginProps {
   onLogin: (user: User) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [openSuccess, setOpenSuccess] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    
     // Simulate a user login
     const user: User = { id: "1", name: "John Doe" };
     onLogin(user);
-    // navigate("/");
+    setOpenSuccess(true); 
+    setTimeout(() => navigate("/"), 1500);
+  };
+
+  const handleClose = () => {
+    setOpenSuccess(false);
   };
 
   return (
-    <div>
-      <h2>login</h2>
+    <div style={{ maxWidth: 400, margin: '0 auto', padding: 20 }}>
+      <h2 style={{ textAlign: 'center' }}>Login</h2>
       <form onSubmit={handleLogin}>
-        <div>
-          <TextField label="username" />
+        <div style={{ marginBottom: 16 }}>
+          <TextField 
+            label="Username" 
+            fullWidth 
+            required 
+          />
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <TextField 
+            label="Password" 
+            type="password" 
+            fullWidth 
+            required 
+          />
         </div>
         <div>
-          <TextField label="password" type="password" />
-        </div>
-        <div>
-          <Button variant="contained" color="primary" type="submit">
-            login
+          <Button 
+            variant="contained" 
+            color="primary" 
+            type="submit"
+            fullWidth
+            size="large"
+          >
+            Login
           </Button>
         </div>
       </form>
+
+      <Snackbar
+        open={openSuccess}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          Login successful! Redirecting...
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
