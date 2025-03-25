@@ -16,7 +16,7 @@ import Login from "./components/login/Login";
 import UserRoute from "./components/user-profile/UserRoute";
 import Navbar from "./components/navbar/Navbar";
 import Footer from "./components/footer/Footer";
-import { Container } from "@mui/material";
+import { Box, Container, CssBaseline } from "@mui/material";
 
 const App: React.FC = () => {
   const [posts] = useState<Post[]>([
@@ -48,35 +48,46 @@ const App: React.FC = () => {
   ];
 
   return (
-    <Container>
-      <Router>
-        <div>
-          <Navbar user={user} />
-          <div>
-            <main>
-              <Routes>
-                <Route path="/feed" element={<Feed posts={posts} />} />
-                <Route path="/posts/:id" element={<PostDetail />} />
-                <Route
-                  path="/users/:username"
-                  element={<UserRoute users={currentUsers} />}
-                />
-                <Route path="/users" element={<UserConnections />} />
-                <Route
-                  path="/profile"
-                  element={
-                    user ? <UserProfile /> : <Navigate replace to="/login" />
-                  }
-                />
-                <Route path="/login" element={<Login onLogin={login} />} />
-                <Route path="/" element={<Home />} />
-              </Routes>
-            </main>
-          </div>
-          <Footer />
-        </div>
-      </Router>
-    </Container>
+    <>
+      <CssBaseline />
+      <Container
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "100vh",
+          p: 0,
+        }}
+      >
+        <Router>
+          <Box sx={{ flexGrow: 1 }}>
+            {" "}
+            <Navbar user={user} />
+            <div>
+              <main>
+                <Routes>
+                  <Route path="/feed" element={<Feed posts={posts} />} />
+                  <Route path="/posts/:id" element={<PostDetail />} />
+                  <Route
+                    path="/users/:username"
+                    element={<UserRoute users={currentUsers} />}
+                  />
+                  <Route path="/users" element={<UserConnections />} />
+                  <Route
+                    path="/profile"
+                    element={
+                      user ? <UserProfile /> : <Navigate replace to="/login" />
+                    }
+                  />
+                  <Route path="/login" element={<Login onLogin={login} />} />
+                  <Route path="/" element={<Home />} />
+                </Routes>
+              </main>
+            </div>
+            <Footer />
+          </Box>
+        </Router>
+      </Container>
+    </>
   );
 };
 

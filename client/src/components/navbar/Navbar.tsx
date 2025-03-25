@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { User } from "../../types/types";
+import { AppBar, Button, IconButton, Toolbar } from "@mui/material";
 
 interface NavbarProps {
   user: User | null;
@@ -8,19 +9,30 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ user }) => {
   return (
-    <div>
-      <div>
-        <Link to="/">Home</Link>
-        <Link to="/feed">Feed</Link>
-        <Link to="/connections">Friends</Link>
-        <Link to="/profile">User Profile</Link>
-      </div>
-      {user ? (
-        <div>Welcome, {user.name}.</div>
-      ) : (
-        <Link to="/login">Login</Link>
-      )}
-    </div>
+    <AppBar position="static">
+      <Toolbar>
+        <IconButton edge="start" color="inherit" aria-label="menu"></IconButton>
+        <Button color="inherit" component={Link} to="/">
+          home
+        </Button>
+        <Button color="inherit" component={Link} to="/feed">
+          feed
+        </Button>
+        <Button color="inherit" component={Link} to="/connections">
+          friends
+        </Button>
+        <Button color="inherit" component={Link} to="/profile">
+          user profile
+        </Button>
+        {user ? (
+          <em>{user.name} logged in</em>
+        ) : (
+          <Button color="inherit" component={Link} to="/login">
+            login
+          </Button>
+        )}
+      </Toolbar>
+    </AppBar>
   );
 };
 
