@@ -11,14 +11,23 @@ Fullstack social media platform connecting music artists and fans, featuring pos
 - Coded exclusively with TypeScript
 
 
-## Tech Stack
+## Tech Stack  
+### Backend  
+- NestJS + GraphQL  
+- PostgreSQL + Prisma ORM  
+- Redis (caching)  
 
-- Backend: NestJS + GraphQL API
-- Database: PostgreSQL w/ Prisma ORM
-- Caching: Redis
-- Containerization: Docker
-- Frontend: (undecided yet)
-- Code Quality: ESLint + Prettier
+### Frontend  
+- React + Vite + TypeScript  
+
+### DevOps  
+- Docker (containerization)  
+- ESLint + Prettier (code quality)  
+
+## Prerequisites
+- Docker and Docker Compose installed
+- Node.js (for local development without Docker)
+- PostgreSQL and Redis (if running without Docker)
 
 ## To-Do Lists
 
@@ -27,7 +36,6 @@ Fullstack social media platform connecting music artists and fans, featuring pos
 - [x] Implement GraphQL API for post/comment creation
 - [x] Implement GraphQL API for user networking
 - [x] Implement REST API for media upload (documented with Swagger)
-- [x] Add user authentication and authorization
 - [x] Add user authentication and authorization
 - [x] Integrate PostgreSQL database with Prisma ORM
 - [x] Implement Redis for caching
@@ -41,19 +49,23 @@ Fullstack social media platform connecting music artists and fans, featuring pos
 - [x] Containerize backend with Docker
  
 ### Frontend
-- [ ] Decide on a frontend framework
-- [ ] Set up project structure
+- [x] Set up React + Vite with TypeScript project structure
 - [ ] Implement user authentication flow
 - [ ] Create user profile pages
 - [ ] Build post creation and display components
 - [ ] Add content liking functionality
 - [ ] Integrate with the backend GraphQL API
 - [ ] Write unit and integration tests
-- [ ] Containerize frontend with Docker
+- [x] Containerize frontend with Docker
 
 ### CI/CD
-- [ ] Implement a CI/CD pipeline for automated testing and deployment
+- [x] Dockerize the whole stack
+- [ ] Implement a CI/CD pipeline for automated testing
 
+### Development vs. Production
+- **Development**: Runs frontend on `http://localhost:5173` with hot-reloading.
+- **Production**: Use `docker-compose -f docker-compose.prod.yml up` (requires frontend build).
+note: if you want production build, change `target` in docker-compose from `development` to `production`.
 
 ## How to Run the Server
 1. Clone the Git repository:
@@ -62,27 +74,37 @@ Fullstack social media platform connecting music artists and fans, featuring pos
    cd rock-connect 
 ```
 
-2. Start the server using Docker Compose (make sure .env exists. You can use .env.example but remove .example first):
+2. Start the application using Docker Compose (make sure .env exists. You can use .env.example but remove .example first):
 ```bash
     docker compose up
 ```
 
-3. (Optional) Seed the database with sample data:
+3. Set up database volumes (if you haven't before):
+```bash
+    yarn prisma:migrate
+```
+
+4. (Optional) Seed the database with sample data:
 ```bash
     yarn prisma:seed
 ```
 
-4. Access the GraphQL Playground at:
+5. Access website at:
+```bash
+    http://localhost:5173
+```
+
+6. Access the GraphQL Playground at:
 ```bash
     http://localhost:3000/graphql
 ```
 
-5. to preview database run:
+7. to preview database run:
 ```bash
     yarn prisma:studio
 ```
 
-6. (Optional) Access the REST media documentation (Swagger UI) at:
+8. (Optional) Access the REST media documentation (Swagger UI) at:
 ```bash
     http://localhost:3000/api
 ```
