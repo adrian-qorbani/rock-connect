@@ -21,9 +21,9 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
         {/* User-specific links */}
         {user && (
           <>
-            <Button color="inherit" component={Link} to="/connections">
+            {/* <Button color="inherit" component={Link} to="/connections">
               Friends
-            </Button>
+            </Button> */}
             <Button color="inherit" component={Link} to="/profile">
               Profile
             </Button>
