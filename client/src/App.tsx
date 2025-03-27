@@ -50,18 +50,17 @@ const App: React.FC = () => {
   return (
     <>
       <CssBaseline />
-      <Container
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          minHeight: "100vh",
-          p: 0,
-        }}
-      >
-        <Router>
+      <Router>
+        <Navbar user={user} />
+        <Container
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            p: 0,
+          }}
+        >
           <Box sx={{ flexGrow: 1 }}>
             {" "}
-            <Navbar user={user} />
             <div>
               <main>
                 <Routes>
@@ -85,8 +84,8 @@ const App: React.FC = () => {
             </div>
             <Footer />
           </Box>
-        </Router>
-      </Container>
+        </Container>
+      </Router>
     </>
   );
 };

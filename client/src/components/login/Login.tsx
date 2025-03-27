@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { User } from "../../types/types";
-import { Button, TextField, Snackbar, Alert, Link } from "@mui/material";
+import { Button, TextField, Snackbar, Alert, Link, Box, Typography, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 interface LoginProps {
@@ -19,8 +19,6 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Simulate a user login
     const user: User = { id: "1", name: "John Doe" };
     onLogin(user);
     setOpenSuccess(true); 
@@ -29,13 +27,10 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
   const handleCreateAccount = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically validate passwords match and send to your API
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords don't match!");
       return;
     }
-    
-    // Simulate account creation and login
     const user: User = { id: "1", name: formData.username };
     onLogin(user);
     setOpenSuccess(true);
@@ -44,131 +39,119 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleClose = () => {
-    setOpenSuccess(false);
-  };
-
+  const handleClose = () => setOpenSuccess(false);
   const toggleCreateAccount = () => {
     setIsCreatingAccount(!isCreatingAccount);
-    setFormData({
-      username: '',
-      password: '',
-      confirmPassword: ''
-    });
+    setFormData({ username: '', password: '', confirmPassword: '' });
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '0 auto', padding: 20 }}>
-      <h2 style={{ textAlign: 'center' }}>{isCreatingAccount ? 'Create Account' : 'Login'}</h2>
-      
-      {!isCreatingAccount ? (
-        <form onSubmit={handleLogin}>
-          <div style={{ marginBottom: 16 }}>
-            <TextField 
-              label="Username" 
-              fullWidth 
-              required 
+    <Box sx={{
+      display: 'flex',
+      height: '80vh',
+      flexDirection: { xs: 'column', md: 'row' }
+    }}>
+      {/* Left Section - Welcome Content */}
+      <Box sx={{
+        flex: 1,
+        // background: 'linear-gradient(to bottom, #1e88e5, #0d47a1)',
+        // color: 'white',
+        p: 8,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        textAlign: { xs: 'center', md: 'left' }
+      }}>
+        <Typography variant="h2" sx={{ fontWeight: 'bold', mb: 2 }}>
+          Rock-Connect
+        </Typography>
+        <Typography variant="h5" sx={{ mb: 4 }}>
+          Connect with friends and artists.
+        </Typography>
+        <Box>
+          <Typography>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. 
+            Vivamus hendrerit arcu sed erat molestie vehicula.
+          </Typography>
+          <Typography>
+            Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor.
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* Right Section - Form */}
+      <Box sx={{
+        flex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        p: 4
+      }}>
+        <Paper elevation={6} sx={{
+          width: '100%',
+          maxWidth: 400,
+          p: 4
+        }}>
+          <Typography variant="h5" component="h1" align="center" gutterBottom>
+            {isCreatingAccount ? 'Create Account' : 'Login'}
+          </Typography>
+          
+          <Box component="form" onSubmit={isCreatingAccount ? handleCreateAccount : handleLogin}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              label="Username"
               name="username"
               value={formData.username}
               onChange={handleInputChange}
             />
-          </div>
-          <div style={{ marginBottom: 16 }}>
-            <TextField 
-              label="Password" 
-              type="password" 
-              fullWidth 
-              required 
+            <TextField
+              margin="normal"
+              required
+              fullWidth
               name="password"
+              label="Password"
+              type="password"
               value={formData.password}
               onChange={handleInputChange}
             />
-          </div>
-          <div>
-            <Button 
-              variant="contained" 
-              color="primary" 
+            {isCreatingAccount && (
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="confirmPassword"
+                label="Confirm Password"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+              />
+            )}
+            <Button
               type="submit"
               fullWidth
-              size="large"
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
             >
-              Login
+              {isCreatingAccount ? 'Create Account' : 'Login'}
             </Button>
-          </div>
-          <div style={{ textAlign: 'center', marginTop: 16 }}>
-            <Link 
-              component="button" 
-              type="button" 
-              onClick={toggleCreateAccount}
-              underline="hover"
-            >
-              Create a new account
-            </Link>
-          </div>
-        </form>
-      ) : (
-        <form onSubmit={handleCreateAccount}>
-          <div style={{ marginBottom: 16 }}>
-            <TextField 
-              label="Username" 
-              fullWidth 
-              required 
-              name="username"
-              value={formData.username}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div style={{ marginBottom: 16 }}>
-            <TextField 
-              label="Password" 
-              type="password" 
-              fullWidth 
-              required 
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div style={{ marginBottom: 16 }}>
-            <TextField 
-              label="Confirm Password" 
-              type="password" 
-              fullWidth 
-              required 
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <Button 
-              variant="contained" 
-              color="primary" 
-              type="submit"
-              fullWidth
-              size="large"
-            >
-              Create Account
-            </Button>
-          </div>
-          <div style={{ textAlign: 'center', marginTop: 16 }}>
-            <Link 
-              component="button" 
-              type="button" 
-              onClick={toggleCreateAccount}
-              underline="hover"
-            >
-              Back to Login
-            </Link>
-          </div>
-        </form>
-      )}
+            <Box textAlign="center">
+              <Link 
+                component="button" 
+                type="button" 
+                onClick={toggleCreateAccount}
+                underline="hover"
+              >
+                {isCreatingAccount ? 'Already have an account? Login' : "Don't have an account? Sign Up"}
+              </Link>
+            </Box>
+          </Box>
+        </Paper>
+      </Box>
 
       <Snackbar
         open={openSuccess}
@@ -180,7 +163,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           {isCreatingAccount ? 'Account created successfully!' : 'Login successful!'} Redirecting...
         </Alert>
       </Snackbar>
-    </div>
+    </Box>
   );
 };
 
