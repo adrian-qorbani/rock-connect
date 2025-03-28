@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { useMutation } from "@apollo/client";
-import { LOGIN_MUTATION, CREATE_USER_MUTATION } from "../../graphql/auth";
 import {
   Button,
   TextField,
@@ -12,7 +10,10 @@ import {
   Paper,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
+import {
+  useLoginMutation,
+  useCreateUserMutation,
+} from "../../generated/graphql";
 import Cookies from "js-cookie";
 
 interface LoginProps {
@@ -31,9 +32,9 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     confirmPassword: "",
   });
 
-  const [login] = useMutation(LOGIN_MUTATION, {
+  const [login, { loading: loginLoading }] = useLoginMutation({
     onCompleted: (data) => {
-      Cookies.set("access_token", data.login.access_token, { expires: 1 }); // Expires in 1 day
+      Cookies.set("access_token", data.login.access_token, { expires: 1 });
       onLogin({ username: formData.username });
       setOpenSuccess(true);
       setTimeout(() => navigate("/"), 1500);
@@ -43,9 +44,9 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     },
   });
 
-  const [createUser] = useMutation(CREATE_USER_MUTATION, {
+  const [createUser, { loading: createUserLoading }] = useCreateUserMutation({
     onCompleted: () => {
-      // After creating account, automatically log the user in
+      //log in after user creates
       login({
         variables: {
           authInput: {
@@ -223,6 +224,8 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
               disabled={
+                loginLoading ||
+                createUserLoading ||
                 !formData.username ||
                 !formData.password ||
                 (isCreatingAccount &&
@@ -230,7 +233,13 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                     formData.password !== formData.confirmPassword))
               }
             >
-              {isCreatingAccount ? "Create Account" : "Login"}
+              {isCreatingAccount
+                ? createUserLoading
+                  ? "Creating..."
+                  : "Create Account"
+                : loginLoading
+                ? "Logging in..."
+                : "Login"}
             </Button>
             <Box textAlign="center">
               <Link
