@@ -9,7 +9,7 @@ export class UserService {
   constructor(private repository: UserRepository) {}
 
   async getUser(userInfo) {
-    const user = await this.repository.getUser(userInfo);
+    const user = await this.repository.getUser({ where: userInfo });
     return user;
   }
 
