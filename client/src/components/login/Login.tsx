@@ -15,12 +15,9 @@ import {
   useCreateUserMutation,
 } from "../../generated/graphql";
 import Cookies from "js-cookie";
+import { useAuth } from "../../context/AuthContext";
 
-interface LoginProps {
-  onLogin: (user: { username: string }) => void;
-}
-
-const Login: React.FC<LoginProps> = ({ onLogin }) => {
+const Login: React.FC = () => {
   const navigate = useNavigate();
   const [openSuccess, setOpenSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -31,11 +28,12 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     password: "",
     confirmPassword: "",
   });
-
-  const [login, { loading: loginLoading }] = useLoginMutation({
+  
+  const { login } = useAuth();
+  const [loginMutation, { loading: loginLoading }] = useLoginMutation({
     onCompleted: (data) => {
       Cookies.set("access_token", data.login.access_token, { expires: 1 });
-      onLogin({ username: formData.username });
+      login({ username: formData.username });
       setOpenSuccess(true);
       setTimeout(() => navigate("/"), 1500);
     },
@@ -46,8 +44,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
   const [createUser, { loading: createUserLoading }] = useCreateUserMutation({
     onCompleted: () => {
-      //log in after user creates
-      login({
+      loginMutation({
         variables: {
           authInput: {
             username: formData.username,
@@ -64,7 +61,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
-    login({
+    loginMutation({
       variables: {
         authInput: {
           username: formData.username,

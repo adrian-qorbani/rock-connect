@@ -1,5 +1,7 @@
+// src/apollo/client.ts
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
+import { onError } from "@apollo/client/link/error";
 import Cookies from "js-cookie";
 
 const graphUrl = import.meta.env.SERVER_GRAPHQL_ENDPOINT;
@@ -18,8 +20,24 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    graphQLErrors.forEach(({ message }) => {
+      if (message === "Unauthorized" || message.includes("Forbidden")) {
+        // Handle token expiration or invalid token
+        Cookies.remove("access_token");
+        // You might want to redirect to login here
+        window.location.href = "/login";
+      }
+    });
+  }
+  if (networkError) {
+    console.log(`[Network error]: ${networkError}`);
+  }
+});
+
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: errorLink.concat(authLink.concat(httpLink)),
   cache: new InMemoryCache(),
 });
 

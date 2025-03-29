@@ -17,6 +17,7 @@ import UserRoute from "./components/user-profile/UserRoute";
 import Navbar from "./components/navbar/Navbar";
 import Footer from "./components/footer/Footer";
 import { Box, Container, CssBaseline } from "@mui/material";
+import { useAuth } from "./context/AuthContext";
 
 const App: React.FC = () => {
   const [posts] = useState<Post[]>([
@@ -35,13 +36,12 @@ const App: React.FC = () => {
       content: "This is the content of the second post.",
     },
   ]);
-  const [user, setUser] = useState<User | null>(null);
+  const { user, loading } = useAuth();
 
-  const login = (user: User) => {
-    setUser(user);
-  };
+  if (loading) {
+    return <div>Loading...</div>; 
+  }
 
-  // Example users for UserRoute
   const currentUsers: User[] = [
     { id: "1", username: "John Doe" },
     { id: "2", username: "Jane Smith" },
@@ -51,6 +51,7 @@ const App: React.FC = () => {
     <>
       <CssBaseline />
       <Router>
+        {/* @ts-ignore */}
         <Navbar user={user} />
         <Container
           sx={{
@@ -77,7 +78,7 @@ const App: React.FC = () => {
                       user ? <UserProfile /> : <Navigate replace to="/login" />
                     }
                   />
-                  <Route path="/login" element={<Login onLogin={login} />} />
+                  <Route path="/login" element={<Login />} />
                   <Route path="/" element={<Home />} />
                 </Routes>
               </main>
