@@ -9,7 +9,12 @@ export class UserService {
   constructor(private repository: UserRepository) {}
 
   async getUser(userInfo) {
-    const user = await this.repository.getUser({ where: userInfo });
+    const user = await this.repository.getUser(userInfo);
+    return user;
+  }
+
+  async getUserWithRelations(userInfo) {
+    const user = await this.repository.getUserWithRelations(userInfo);
     return user;
   }
 

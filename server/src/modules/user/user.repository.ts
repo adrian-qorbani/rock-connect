@@ -6,8 +6,8 @@ import { PrismaService } from 'src/database/prisma.service';
 export class UserRepository {
   constructor(private prisma: PrismaService) {}
 
-  async getUser(params: { where: Prisma.UserWhereUniqueInput }) {
-    return this.prisma.user.findUnique(params);
+  async getUser(where: Prisma.UserWhereUniqueInput) {
+    return this.prisma.user.findUnique({ where });
   }
 
   async getAllUsers(params: {
@@ -19,6 +19,28 @@ export class UserRepository {
   }): Promise<User[]> {
     const { skip, take, cursor, where, orderBy } = params;
     return this.prisma.user.findMany({ skip, take, cursor, where, orderBy });
+  }
+
+  async getUserWithRelations(where: Prisma.UserWhereUniqueInput) {
+    return this.prisma.user
+      .findUnique({
+        where,
+        include: {
+          posts: true,
+          followers: true,
+          following: true,
+        },
+      })
+      .then((user) => {
+        if (!user) return null;
+
+        return {
+          ...user,
+          postsCount: user.posts.length,
+          followersCount: user.followers.length,
+          followingCount: user.following.length,
+        };
+      });
   }
 
   async createUser(params: { data: Prisma.UserCreateInput }): Promise<User> {

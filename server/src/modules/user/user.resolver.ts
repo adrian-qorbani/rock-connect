@@ -12,7 +12,7 @@ export class UserResolver {
 
   @Query(() => User)
   async getCurrentUser(@CurrentUser() user: User) {
-    return this.userService.getUser({ username: user.username });
+    return this.userService.getUserWithRelations({ username: user.username });
   }
 
   @Query(() => User)
