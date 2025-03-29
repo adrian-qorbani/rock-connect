@@ -43,8 +43,8 @@ const App: React.FC = () => {
 
   // Example users for UserRoute
   const currentUsers: User[] = [
-    { id: "1", name: "John Doe" },
-    { id: "2", name: "Jane Smith" },
+    { id: "1", username: "John Doe" },
+    { id: "2", username: "Jane Smith" },
   ];
 
   return (
