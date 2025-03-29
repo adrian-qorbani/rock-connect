@@ -35,7 +35,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
 
         {user ? (
           <Typography variant="body1" component="span" sx={{ color: 'inherit' }}>
-            Welcome, {user.name}
+            Welcome, {user.username}
           </Typography>
         ) : (
           <Button 
