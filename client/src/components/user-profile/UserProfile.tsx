@@ -20,7 +20,8 @@ import { useGetCurrentUserQuery } from "../../generated/graphql";
 interface Post {
   id: string;
   title: string;
-  image: string;
+  content: string;
+  image?: string;
 }
 
 interface UserProfileData {
@@ -30,11 +31,10 @@ interface UserProfileData {
 }
 
 const UserProfile: React.FC = () => {
-  // Use the generated hook
   const { data, loading, error } = useGetCurrentUserQuery({
     fetchPolicy: "cache-and-network",
     context: {
-      credentials: 'include', // This sends cookies with the request
+      credentials: 'include',
     },
   });
 
@@ -45,7 +45,6 @@ const UserProfile: React.FC = () => {
     profilePicture: "",
   });
 
-  // Initialize editedUser when data is loaded
   useEffect(() => {
     if (data?.getCurrentUser) {
       setEditedUser({
@@ -91,24 +90,14 @@ const UserProfile: React.FC = () => {
   const user = data?.getCurrentUser;
   if (!user) return <Typography>User not found</Typography>;
 
-  // Temporary dummy posts - replace with actual data when available
-  const dummyPosts: Post[] = [
-    {
-      id: "1",
-      title: "Beach Vacation",
-      image: "https://source.unsplash.com/random/300x300/?beach",
-    },
-    {
-      id: "2",
-      title: "Mountain Hike",
-      image: "https://source.unsplash.com/random/300x300/?mountain",
-    },
-    {
-      id: "3",
-      title: "City View",
-      image: "https://source.unsplash.com/random/300x300/?city",
-    },
-  ];
+  // Use actual posts from the user data
+  const userPosts: Post[] = user.posts?.map(post => ({
+    id: Math.random().toString(), // Fallback ID if not available
+    title: post.title,
+    content: post.content,
+    // If you have images in posts, add them here
+    image: "https://source.unsplash.com/random/300x300/?post" // Fallback image - replace with actual post image if available
+  })) || [];
 
   return (
     <Box sx={{ maxWidth: 800, mx: "auto", p: 3 }}>
@@ -214,7 +203,7 @@ const UserProfile: React.FC = () => {
                   >
                     <div>
                       <Typography variant="h6">
-                        {formatNumber(dummyPosts.length)}
+                        {formatNumber(user.postsCount)}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         Posts
@@ -222,7 +211,7 @@ const UserProfile: React.FC = () => {
                     </div>
                     <div>
                       <Typography variant="h6">
-                        {formatNumber(0)} {/* Replace with actual followers */}
+                        {formatNumber(user.followersCount)}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         Followers
@@ -230,7 +219,7 @@ const UserProfile: React.FC = () => {
                     </div>
                     <div>
                       <Typography variant="h6">
-                        {formatNumber(0)} {/* Replace with actual following */}
+                        {formatNumber(user.followingCount)}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         Following
@@ -243,14 +232,14 @@ const UserProfile: React.FC = () => {
           </Box>
 
           {/* Posts Grid */}
-          {!editMode && (
+          {!editMode && userPosts.length > 0 && (
             <>
               <Divider sx={{ my: 3 }} />
               <Typography variant="h6" gutterBottom>
                 Posts
               </Typography>
               <ImageList cols={3} gap={8}>
-                {dummyPosts.map((post) => (
+                {userPosts.map((post) => (
                   <ImageListItem key={post.id}>
                     <img
                       src={post.image}
@@ -263,10 +252,31 @@ const UserProfile: React.FC = () => {
                         objectFit: "cover",
                       }}
                     />
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        p: 1,
+                        background: 'rgba(0, 0, 0, 0.5)',
+                        color: 'white',
+                      }}
+                    >
+                      <Typography variant="subtitle2">
+                        {post.title}
+                      </Typography>
+                    </Box>
                   </ImageListItem>
                 ))}
               </ImageList>
             </>
+          )}
+
+          {!editMode && userPosts.length === 0 && (
+            <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
+              No posts yet.
+            </Typography>
           )}
 
           <Divider sx={{ my: 3 }} />
