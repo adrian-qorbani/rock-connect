@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Avatar,
   Box,
@@ -12,66 +12,67 @@ import {
   Typography,
   ImageList,
   ImageListItem,
+  CircularProgress,
 } from "@mui/material";
 import { Edit, Save, Cancel } from "@mui/icons-material";
+import { useGetCurrentUserQuery } from "../../generated/graphql"; 
 
-interface User {
-  name: string;
+interface Post {
+  id: string;
+  title: string;
+  image: string;
+}
+
+interface UserProfileData {
   username: string;
-  email: string;
-  profilePicture: string;
-  posts: {
-    id: string;
-    title: string;
-    image: string;
-  }[];
-  followers: number;
-  following: number;
+  bio?: string;
+  profilePicture?: string;
 }
 
 const UserProfile: React.FC = () => {
-  // Static dummy user data with posts and social stats
-  const dummyUser: User = {
-    name: "John Doe",
-    username: "johndoe123",
-    email: "john.doe@example.com",
-    profilePicture: "https://i.pravatar.cc/150?img=3",
-    posts: [
-      {
-        id: "1",
-        title: "Beach Vacation",
-        image: "https://source.unsplash.com/random/300x300/?beach",
-      },
-      {
-        id: "2",
-        title: "Mountain Hike",
-        image: "https://source.unsplash.com/random/300x300/?mountain",
-      },
-      {
-        id: "3",
-        title: "City View",
-        image: "https://source.unsplash.com/random/300x300/?city",
-      },
-    ],
-    followers: 1243,
-    following: 567,
-  };
+  // Use the generated hook
+  const { data, loading, error } = useGetCurrentUserQuery({
+    fetchPolicy: "cache-and-network",
+    context: {
+      credentials: 'include', // This sends cookies with the request
+    },
+  });
 
-  const [user, setUser] = useState<User>(dummyUser);
   const [editMode, setEditMode] = useState(false);
-  const [editedUser, setEditedUser] = useState<User>(dummyUser);
+  const [editedUser, setEditedUser] = useState<UserProfileData>({
+    username: "",
+    bio: "",
+    profilePicture: "",
+  });
+
+  // Initialize editedUser when data is loaded
+  useEffect(() => {
+    if (data?.getCurrentUser) {
+      setEditedUser({
+        username: data.getCurrentUser.username,
+        bio: data.getCurrentUser.bio || "",
+        profilePicture: data.getCurrentUser.profilePicture || "",
+      });
+    }
+  }, [data]);
 
   const handleEdit = () => {
-    setEditedUser(user);
     setEditMode(true);
   };
 
   const handleSave = () => {
-    setUser(editedUser);
+    // TODO: Implement mutation to update user
     setEditMode(false);
   };
 
   const handleCancel = () => {
+    if (data?.getCurrentUser) {
+      setEditedUser({
+        username: data.getCurrentUser.username,
+        bio: data.getCurrentUser.bio || "",
+        profilePicture: data.getCurrentUser.profilePicture || "",
+      });
+    }
     setEditMode(false);
   };
 
@@ -80,10 +81,34 @@ const UserProfile: React.FC = () => {
     setEditedUser((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Format large numbers with comma separators
   const formatNumber = (num: number): string => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
+
+  if (loading) return <CircularProgress />;
+  if (error) return <Typography color="error">Error loading profile: {error.message}</Typography>;
+
+  const user = data?.getCurrentUser;
+  if (!user) return <Typography>User not found</Typography>;
+
+  // Temporary dummy posts - replace with actual data when available
+  const dummyPosts: Post[] = [
+    {
+      id: "1",
+      title: "Beach Vacation",
+      image: "https://source.unsplash.com/random/300x300/?beach",
+    },
+    {
+      id: "2",
+      title: "Mountain Hike",
+      image: "https://source.unsplash.com/random/300x300/?mountain",
+    },
+    {
+      id: "3",
+      title: "City View",
+      image: "https://source.unsplash.com/random/300x300/?city",
+    },
+  ];
 
   return (
     <Box sx={{ maxWidth: 800, mx: "auto", p: 3 }}>
@@ -124,7 +149,7 @@ const UserProfile: React.FC = () => {
             }}
           >
             <Avatar
-              src={user.profilePicture}
+              src={editedUser.profilePicture || "/default-avatar.png"}
               sx={{
                 width: 150,
                 height: 150,
@@ -138,14 +163,6 @@ const UserProfile: React.FC = () => {
                 <>
                   <TextField
                     fullWidth
-                    label="Name"
-                    name="name"
-                    value={editedUser.name}
-                    onChange={handleChange}
-                    margin="normal"
-                  />
-                  <TextField
-                    fullWidth
                     label="Username"
                     name="username"
                     value={editedUser.username}
@@ -154,29 +171,33 @@ const UserProfile: React.FC = () => {
                   />
                   <TextField
                     fullWidth
-                    label="Email"
-                    name="email"
-                    value={editedUser.email}
+                    label="Bio"
+                    name="bio"
+                    value={editedUser.bio || ""}
                     onChange={handleChange}
                     margin="normal"
-                    type="email"
+                    multiline
+                    rows={3}
+                  />
+                  <TextField
+                    fullWidth
+                    label="Profile Picture URL"
+                    name="profilePicture"
+                    value={editedUser.profilePicture || ""}
+                    onChange={handleChange}
+                    margin="normal"
                   />
                 </>
               ) : (
                 <>
                   <Typography variant="h4" gutterBottom>
-                    {user.name}
+                    {user.username}
                   </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    @{user.username}
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    {user.email}
-                  </Typography>
+                  {user.bio && (
+                    <Typography variant="body1" gutterBottom>
+                      {user.bio}
+                    </Typography>
+                  )}
 
                   {/* Social Stats */}
                   <Box
@@ -193,7 +214,7 @@ const UserProfile: React.FC = () => {
                   >
                     <div>
                       <Typography variant="h6">
-                        {formatNumber(user.posts.length)}
+                        {formatNumber(dummyPosts.length)}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         Posts
@@ -201,7 +222,7 @@ const UserProfile: React.FC = () => {
                     </div>
                     <div>
                       <Typography variant="h6">
-                        {formatNumber(user.followers)}
+                        {formatNumber(0)} {/* Replace with actual followers */}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         Followers
@@ -209,7 +230,7 @@ const UserProfile: React.FC = () => {
                     </div>
                     <div>
                       <Typography variant="h6">
-                        {formatNumber(user.following)}
+                        {formatNumber(0)} {/* Replace with actual following */}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         Following
@@ -221,7 +242,7 @@ const UserProfile: React.FC = () => {
             </Box>
           </Box>
 
-          {/* Posts Grid - Only shown in view mode */}
+          {/* Posts Grid */}
           {!editMode && (
             <>
               <Divider sx={{ my: 3 }} />
@@ -229,7 +250,7 @@ const UserProfile: React.FC = () => {
                 Posts
               </Typography>
               <ImageList cols={3} gap={8}>
-                {user.posts.map((post) => (
+                {dummyPosts.map((post) => (
                   <ImageListItem key={post.id}>
                     <img
                       src={post.image}
@@ -250,8 +271,8 @@ const UserProfile: React.FC = () => {
 
           <Divider sx={{ my: 3 }} />
 
-          <Box sx={{ textAlign: "right" }}>
-            {editMode ? (
+          {editMode && (
+            <Box sx={{ textAlign: "right" }}>
               <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
                 <Button
                   variant="outlined"
@@ -270,10 +291,8 @@ const UserProfile: React.FC = () => {
                   Save Changes
                 </Button>
               </Box>
-            ) : (
-              <></>
-            )}
-          </Box>
+            </Box>
+          )}
         </CardContent>
       </Card>
     </Box>
