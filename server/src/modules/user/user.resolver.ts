@@ -5,6 +5,7 @@ import { CreateUserInput } from './dto/create-user.input';
 import { IsPublic } from 'src/common/decorator/public.decorator';
 import { CurrentUser } from 'src/common/decorator/user.decorator';
 import { GetFollowerInput } from './dto/get-follower.input';
+import { GetFilterUserInput } from './dto/get-filter-user.input';
 
 @Resolver()
 export class UserResolver {
@@ -53,5 +54,12 @@ export class UserResolver {
       user.username,
       getFollowerInput.username,
     );
+  }
+
+  @Query(() => [User])
+  async filterUsers(
+    @Args('getFilterUserInput') getFilterUserInput: GetFilterUserInput,
+  ) {
+    return this.userService.getUsersWithFilters(getFilterUserInput)
   }
 }

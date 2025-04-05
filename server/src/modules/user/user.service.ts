@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcryptjs';
 import { CreateUserInput } from './dto/create-user.input';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
+import { GetFilterUserInput } from './dto/get-filter-user.input';
 
 @Injectable()
 export class UserService {
@@ -101,5 +102,30 @@ export class UserService {
       throw new Error('You cannot unfollow yourself.');
     }
     return this.repository.unfollowUser(currentUser.id, targetUser.id);
+  }
+
+  async getUsersWithFilters(filterInput: GetFilterUserInput) {
+    console.log('Filter input:', filterInput);
+    const where: Prisma.UserWhereInput = {};
+
+    if (filterInput.username) {
+      where.username = { contains: filterInput.username, mode: 'insensitive' };
+    }
+
+    if (filterInput.name) {
+      where.name = { contains: filterInput.name, mode: 'insensitive' };
+    }
+
+    if (filterInput.createdAtFrom || filterInput.createdAtTo) {
+      where.createdAt = {
+        ...(filterInput.createdAtFrom && { gte: filterInput.createdAtFrom }),
+        ...(filterInput.createdAtTo && { lte: filterInput.createdAtTo }),
+      };
+    }
+    try {
+      return this.repository.getAllUsers({ where });
+    } catch (e) {
+      throw new NotFoundException('No matching users!');
+    }
   }
 }
