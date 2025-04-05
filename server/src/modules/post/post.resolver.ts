@@ -7,6 +7,7 @@ import { PostService } from 'src/modules/post/post.service';
 import { CreatePostInput } from './dto/create-post.input';
 import { GetToggleLikePostInput } from './dto/get-toggle-like-post.input';
 import { LikeModel } from '../like/models/like.model';
+import { GetFilteredPostsInput } from './dto/get-filter-posts.input';
 
 @Resolver()
 export class PostResolver {
@@ -38,5 +39,12 @@ export class PostResolver {
       postUuid: getToggleLikePostInput.postUuid,
       username: user.username
     })
+  }
+
+  @Query(() => [Post])
+  async filterPosts(
+    @Args("getFilteredPostsInput") getFilteredPostsInput: GetFilteredPostsInput 
+  ) {
+    return this.postService.getFilteredPosts(getFilteredPostsInput)
   }
 }

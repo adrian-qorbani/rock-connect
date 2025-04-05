@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PostRepository } from './post.repository';
-import { Post, User } from '@prisma/client';
+import { Post, Prisma, User } from '@prisma/client';
 import { LikeService } from '../like/like.service';
+import { GetFilterUserInput } from '../user/dto/get-filter-user.input';
+import { GetFilteredPostsInput } from './dto/get-filter-posts.input';
 
 @Injectable()
 export class PostService {
@@ -63,13 +65,37 @@ export class PostService {
     postUuid: Post['uuid'];
     username: User['username'];
   }) {
-    console.log("init")
+    console.log('init');
     const { postUuid, username } = params;
-    console.log("init with:", `${postUuid} and ${username}`)
+    console.log('init with:', `${postUuid} and ${username}`);
     const updatePostLike = await this.likeService.addOrRemoveLike(
       postUuid,
       username,
     );
     return updatePostLike;
+  }
+
+  async getFilteredPosts(filterPostInput: GetFilteredPostsInput) {
+    const where: Prisma.PostWhereInput = {};
+
+    if (filterPostInput.title) {
+      where.title = { contains: filterPostInput.title, mode: 'insensitive' };
+    }
+
+    if (filterPostInput.createdAtFrom || filterPostInput.createdAtTo) {
+      where.createdAt = {
+        ...(filterPostInput.createdAtFrom && {
+          gte: filterPostInput.createdAtFrom,
+        }),
+        ...(filterPostInput.createdAtTo && {
+          lte: filterPostInput.createdAtTo,
+        }),
+      };
+    }
+    try {
+      return this.postRepository.getPosts({ where });
+    } catch (e) {
+      throw new NotFoundException('No matching posts');
+    }
   }
 }
