@@ -1,5 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsDate, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import {
+  IsDate,
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 @InputType()
 export class GetFilterUserInput {
