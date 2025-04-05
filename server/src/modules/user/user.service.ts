@@ -105,7 +105,6 @@ export class UserService {
   }
 
   async getUsersWithFilters(filterInput: GetFilterUserInput) {
-    console.log('Filter input:', filterInput);
     const where: Prisma.UserWhereInput = {};
 
     if (filterInput.username) {
