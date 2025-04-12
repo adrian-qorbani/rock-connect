@@ -1,5 +1,6 @@
 import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql';
 import { Post as PostDB, User as UserDB } from '@prisma/client';
+import { User } from 'src/modules/user/models/user.model';
 
 @ObjectType()
 export class FeedPost {
@@ -24,6 +25,6 @@ export class FeedPost {
   @Field(() => Int)
   userId: PostDB[`userId`];
 
-  @Field(() => String)
-  username: UserDB[`username`]
+  @Field(() => User)
+  user: UserDB;
 }

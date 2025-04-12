@@ -19,7 +19,7 @@ export class PostResolver {
     return this.postService.getPosts();
   }
 
-  @Query(() => [Post])
+  @Query(() => [FeedPost])
   async getCurrentUserFeedPosts(@CurrentUser() user: User) {
     return this.postService.getFollowingUsersPosts({ username: user.username });
   }

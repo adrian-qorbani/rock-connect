@@ -29,7 +29,11 @@ export class PostRepository {
         },
       },
       include: {
-        user: true,
+        user: {
+          select: {
+            username: true
+          }
+        },
         media: true,
         likes: true,
         comments: {
