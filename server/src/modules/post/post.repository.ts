@@ -17,6 +17,33 @@ export class PostRepository {
     return this.prisma.post.findMany({ skip, take, cursor, where, orderBy });
   }
 
+  async getFollowingUsersPosts(username) {
+    return this.prisma.post.findMany({
+      where: {
+        user: {
+          followers: {
+            some: {
+              username: username,
+            },
+          },
+        },
+      },
+      include: {
+        user: true,
+        media: true,
+        likes: true,
+        comments: {
+          include: {
+            user: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
   async getPost(params: {
     where: Prisma.PostWhereInput;
   }): Promise<Post | null> {

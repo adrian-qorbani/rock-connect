@@ -4,17 +4,24 @@ import { Post, Prisma, User } from '@prisma/client';
 import { LikeService } from '../like/like.service';
 import { GetFilterUserInput } from '../user/dto/get-filter-user.input';
 import { GetFilteredPostsInput } from './dto/get-filter-posts.input';
+import { PrismaService } from 'src/database/prisma.service';
 
 @Injectable()
 export class PostService {
   constructor(
     private postRepository: PostRepository,
     private likeService: LikeService,
+    private prisma: PrismaService,
   ) {}
 
   async getPosts() {
     const posts = this.postRepository.getPosts({});
     return posts;
+  }
+
+  async getFollowingUsersPosts(params: { username: User['username'] }) {
+    const { username } = params;
+    return this.postRepository.getFollowingUsersPosts(username);
   }
 
   async createPost(params: {

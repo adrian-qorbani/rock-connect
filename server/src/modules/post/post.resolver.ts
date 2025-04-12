@@ -8,6 +8,7 @@ import { CreatePostInput } from './dto/create-post.input';
 import { GetToggleLikePostInput } from './dto/get-toggle-like-post.input';
 import { LikeModel } from '../like/models/like.model';
 import { GetFilteredPostsInput } from './dto/get-filter-posts.input';
+import { FeedPost } from './models/feedPost.model';
 
 @Resolver()
 export class PostResolver {
@@ -16,6 +17,11 @@ export class PostResolver {
   @Query(() => [Post])
   async getPosts() {
     return this.postService.getPosts();
+  }
+
+  @Query(() => [Post])
+  async getCurrentUserFeedPosts(@CurrentUser() user: User) {
+    return this.postService.getFollowingUsersPosts({ username: user.username });
   }
 
   @Mutation(() => Post)
@@ -32,19 +38,20 @@ export class PostResolver {
 
   @Mutation(() => LikeModel)
   async togglePostLike(
-    @Args('getToggleLikePostInput') getToggleLikePostInput: GetToggleLikePostInput,
+    @Args('getToggleLikePostInput')
+    getToggleLikePostInput: GetToggleLikePostInput,
     @CurrentUser() user: User,
   ) {
     return this.postService.togglePostLike({
       postUuid: getToggleLikePostInput.postUuid,
-      username: user.username
-    })
+      username: user.username,
+    });
   }
 
   @Query(() => [Post])
   async filterPosts(
-    @Args("getFilteredPostsInput") getFilteredPostsInput: GetFilteredPostsInput 
+    @Args('getFilteredPostsInput') getFilteredPostsInput: GetFilteredPostsInput,
   ) {
-    return this.postService.getFilteredPosts(getFilteredPostsInput)
+    return this.postService.getFilteredPosts(getFilteredPostsInput);
   }
 }
