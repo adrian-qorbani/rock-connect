@@ -34,7 +34,7 @@ Fullstack social media platform connecting music artists and fans, featuring pos
 
 ## To-Do Lists
 
-### Backend
+### Backend (finished)
 - [x] Set up NestJS project structure
 - [x] Implement GraphQL API for post/comment creation
 - [x] Implement GraphQL API for user networking
@@ -43,12 +43,6 @@ Fullstack social media platform connecting music artists and fans, featuring pos
 - [x] Integrate PostgreSQL database with Prisma ORM
 - [x] Implement Redis for caching
 - [x] Implement data validation and sanitization for all inputs
-- [ ] Implement role-based access control (RBAC) for fine-grained permissions
-- [ ] Implement rate limiter
-- [ ] Implement better monitoring with Winston
-- [ ] Add WebSocket for real-time features
-- [ ] Optimize database queries and indexes
-- [ ] Add security best practices (CORS, CSRF protection, and HTTPS enforcement)
 - [x] Containerize backend with Docker
  
 ### Frontend
