@@ -20,22 +20,6 @@ import { Box, Container, CssBaseline } from "@mui/material";
 import { useAuth } from "./context/AuthContext";
 
 const App: React.FC = () => {
-  const [posts] = useState<Post[]>([
-    {
-      id: "1",
-      title: "First Post",
-      author: "John Doe",
-      publishedAt: "2023-10-01",
-      content: "This is the content of the first post.",
-    },
-    {
-      id: "2",
-      title: "Second Post",
-      author: "Jane Smith",
-      publishedAt: "2023-10-02",
-      content: "This is the content of the second post.",
-    },
-  ]);
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -65,7 +49,7 @@ const App: React.FC = () => {
             <div>
               <main>
                 <Routes>
-                  <Route path="/feed" element={<Feed posts={posts} />} />
+                  <Route path="/feed" element={<Feed />} />
                   <Route path="/posts/:id" element={<PostDetail />} />
                   <Route
                     path="/users/:username"

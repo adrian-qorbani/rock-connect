@@ -15,7 +15,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { Edit, Save, Cancel } from "@mui/icons-material";
-import { useGetCurrentUserQuery } from "../../generated/graphql"; 
+import { useGetCurrentUserQuery } from "../../generated/graphql";
 
 interface Post {
   id: string;
@@ -34,7 +34,7 @@ const UserProfile: React.FC = () => {
   const { data, loading, error } = useGetCurrentUserQuery({
     fetchPolicy: "cache-and-network",
     context: {
-      credentials: 'include',
+      credentials: "include",
     },
   });
 
@@ -85,19 +85,25 @@ const UserProfile: React.FC = () => {
   };
 
   if (loading) return <CircularProgress />;
-  if (error) return <Typography color="error">Error loading profile: {error.message}</Typography>;
+  if (error)
+    return (
+      <Typography color="error">
+        Error loading profile: {error.message}
+      </Typography>
+    );
 
   const user = data?.getCurrentUser;
   if (!user) return <Typography>User not found</Typography>;
 
   // Use actual posts from the user data
-  const userPosts: Post[] = user.posts?.map(post => ({
-    id: Math.random().toString(), // Fallback ID if not available
-    title: post.title,
-    content: post.content,
-    // If you have images in posts, add them here
-    image: "https://source.unsplash.com/random/300x300/?post" // Fallback image - replace with actual post image if available
-  })) || [];
+  const userPosts: Post[] =
+    user.posts?.map((post) => ({
+      id: Math.random().toString(), // Fallback ID if not available
+      title: post.title,
+      content: post.content,
+      // If you have images in posts, add them here
+      image: "https://source.unsplash.com/random/300x300/?post", // Fallback image - replace with actual post image if available
+    })) || [];
 
   return (
     <Box sx={{ maxWidth: 800, mx: "auto", p: 3 }}>
@@ -226,6 +232,9 @@ const UserProfile: React.FC = () => {
                       </Typography>
                     </div>
                   </Box>
+                  <Typography marginTop={2}>
+                    placerholder bio
+                  </Typography>
                 </>
               )}
             </Box>
@@ -254,18 +263,16 @@ const UserProfile: React.FC = () => {
                     />
                     <Box
                       sx={{
-                        position: 'absolute',
+                        position: "absolute",
                         bottom: 0,
                         left: 0,
                         right: 0,
                         p: 1,
-                        background: 'rgba(0, 0, 0, 0.5)',
-                        color: 'white',
+                        background: "rgba(0, 0, 0, 0.5)",
+                        color: "white",
                       }}
                     >
-                      <Typography variant="subtitle2">
-                        {post.title}
-                      </Typography>
+                      <Typography variant="subtitle2">{post.title}</Typography>
                     </Box>
                   </ImageListItem>
                 ))}
