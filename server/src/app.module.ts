@@ -16,6 +16,7 @@ import { JwtStrategy } from './modules/auth/strategy/jwt.strategy';
 import { LikeModule } from './modules/like/like.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { MediaModule } from './modules/media/media.module';
+import { UploadModule } from './modules/upload/upload.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { MediaModule } from './modules/media/media.module';
     LikeModule,
     CommentModule,
     MediaModule,
+    UploadModule,
   ],
   providers: [
     {
