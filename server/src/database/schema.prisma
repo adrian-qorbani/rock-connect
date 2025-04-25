@@ -73,11 +73,16 @@ model Media {
   id        Int      @id @default(autoincrement())
   uuid      String   @default(uuid()) @db.Uuid
   url       String
-  type      String
+  type      MediaType
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
   postId    Int?
   post      Post?    @relation(fields: [postId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum MediaType {
+  POST_PICTURE
+  PROFILE_PICTURE
 }
