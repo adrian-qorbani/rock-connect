@@ -15,6 +15,7 @@ import { JwtGuard } from './modules/auth/guards/jwt-auth.guard';
 import { JwtStrategy } from './modules/auth/strategy/jwt.strategy';
 import { LikeModule } from './modules/like/like.module';
 import { CommentModule } from './modules/comment/comment.module';
+import { MediaModule } from './modules/media/media.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { CommentModule } from './modules/comment/comment.module';
     AuthModule,
     LikeModule,
     CommentModule,
+    MediaModule,
   ],
   providers: [
     {
