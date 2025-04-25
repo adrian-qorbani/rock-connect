@@ -7,10 +7,10 @@ export class MediaModel {
   @Field(() => Int)
   id: MediaDB[`id`];
 
-  @Field()
+  @Field(() => String)
   uuid: MediaDB[`uuid`];
 
-  @Field()
+  @Field(() => String)
   url: MediaDB[`url`];
 
   @Field(() => MediaType)
