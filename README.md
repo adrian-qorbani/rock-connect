@@ -15,7 +15,8 @@ Fullstack social media platform connecting music artists and fans, featuring pos
 ### Backend  
 - NestJS + GraphQL  
 - PostgreSQL + Prisma ORM  
-- Redis (caching)  
+- Redis (caching)
+- Minio/AWS S3 (file storage)  
 
 ### Frontend  
 - React + Vite + TypeScript  
