@@ -1,48 +1,61 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, MediaType } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // Create three Star Wars users
-  const luke = await prisma.user.upsert({
-    where: { email: 'luke@jedi.com' },
-    update: {},
-    create: {
+  // Clear existing data
+  await prisma.like.deleteMany();
+  await prisma.comment.deleteMany();
+  await prisma.media.deleteMany();
+  await prisma.post.deleteMany();
+  await prisma.user.deleteMany();
+
+  // Create users with profile pictures and posts
+  const luke = await prisma.user.create({
+    data: {
       username: 'luke_skywalker',
       email: 'luke@jedi.com',
       password: 'force123',
       name: 'Luke Skywalker',
       bio: 'Jedi Master. Farm boy at heart.',
       profilePicture: 'https://example.com/luke.jpg',
+      media: {
+        create: [
+          {
+            url: 'https://example.com/luke_profile.jpg',
+            type: MediaType.PROFILE_PICTURE,
+          }
+        ]
+      },
       posts: {
         create: [
           {
             title: 'The Force is Strong',
-            content: 'I’ve been training with Master Yoda. The Force is more powerful than I ever imagined!',
+            content: 'I\'ve been training with Master Yoda. The Force is more powerful than I ever imagined!',
             media: {
               create: [
                 {
                   url: 'https://example.com/luke_post1_media1.jpg',
-                  type: 'image',
-                  userId: 1, 
+                  type: MediaType.POST_PICTURE,
+                  userId: 1,
                 },
                 {
                   url: 'https://example.com/luke_post1_media2.jpg',
-                  type: 'image',
-                  userId: 1, 
+                  type: MediaType.POST_PICTURE,
+                  userId: 1,
                 },
               ],
             },
           },
           {
             title: 'My New Lightsaber',
-            content: 'Just built my new green lightsaber. It’s perfect for defending the galaxy!',
+            content: 'Just built my new green lightsaber. It\'s perfect for defending the galaxy!',
             media: {
               create: [
                 {
                   url: 'https://example.com/luke_post2_media1.jpg',
-                  type: 'image',
-                  userId: 1, 
+                  type: MediaType.POST_PICTURE,
+                  userId: 1,
                 },
               ],
             },
@@ -50,18 +63,32 @@ async function main() {
         ],
       },
     },
+    include: {
+      media: true,
+      posts: {
+        include: {
+          media: true
+        }
+      }
+    }
   });
 
-  const leia = await prisma.user.upsert({
-    where: { email: 'leia@rebel.com' },
-    update: {},
-    create: {
+  const leia = await prisma.user.create({
+    data: {
       username: 'princess_leia',
       email: 'leia@rebel.com',
       password: 'hope456',
       name: 'Leia Organa',
       bio: 'Leader of the Rebel Alliance. General and Princess.',
       profilePicture: 'https://example.com/leia.jpg',
+      media: {
+        create: [
+          {
+            url: 'https://example.com/leia_profile.jpg',
+            type: MediaType.PROFILE_PICTURE,
+          }
+        ]
+      },
       posts: {
         create: [
           {
@@ -71,8 +98,8 @@ async function main() {
               create: [
                 {
                   url: 'https://example.com/leia_post1_media1.jpg',
-                  type: 'image',
-                  userId: 2, 
+                  type: MediaType.POST_PICTURE,
+                  userId: 2,
                 },
               ],
             },
@@ -84,8 +111,8 @@ async function main() {
               create: [
                 {
                   url: 'https://example.com/leia_post2_media1.jpg',
-                  type: 'image',
-                  userId: 2, 
+                  type: MediaType.POST_PICTURE,
+                  userId: 2,
                 },
               ],
             },
@@ -93,18 +120,32 @@ async function main() {
         ],
       },
     },
+    include: {
+      media: true,
+      posts: {
+        include: {
+          media: true
+        }
+      }
+    }
   });
 
-  const han = await prisma.user.upsert({
-    where: { email: 'han@falcon.com' },
-    update: {},
-    create: {
+  const han = await prisma.user.create({
+    data: {
       username: 'han_solo',
       email: 'han@falcon.com',
       password: 'kessel789',
       name: 'Han Solo',
       bio: 'Smuggler, Scoundrel, and Captain of the Millennium Falcon.',
       profilePicture: 'https://example.com/han.jpg',
+      media: {
+        create: [
+          {
+            url: 'https://example.com/han_profile.jpg',
+            type: MediaType.PROFILE_PICTURE,
+          }
+        ]
+      },
       posts: {
         create: [
           {
@@ -114,21 +155,21 @@ async function main() {
               create: [
                 {
                   url: 'https://example.com/han_post1_media1.jpg',
-                  type: 'image',
-                  userId: 3, 
+                  type: MediaType.POST_PICTURE,
+                  userId: 3,
                 },
               ],
             },
           },
           {
-            title: 'Chewie’s New Bowcaster',
-            content: 'Chewie got a new bowcaster. He’s unstoppable now!',
+            title: 'Chewie\'s New Bowcaster',
+            content: 'Chewie got a new bowcaster. He\'s unstoppable now!',
             media: {
               create: [
                 {
                   url: 'https://example.com/han_post2_media1.jpg',
-                  type: 'image',
-                  userId: 3, 
+                  type: MediaType.POST_PICTURE,
+                  userId: 3,
                 },
               ],
             },
@@ -136,19 +177,33 @@ async function main() {
         ],
       },
     },
+    include: {
+      media: true,
+      posts: {
+        include: {
+          media: true
+        }
+      }
+    }
   });
 
   // Create additional users
-  const yoda = await prisma.user.upsert({
-    where: { email: 'yoda@jedi.com' },
-    update: {},
-    create: {
+  const yoda = await prisma.user.create({
+    data: {
       username: 'master_yoda',
       email: 'yoda@jedi.com',
       password: 'wisdom123',
       name: 'Yoda',
       bio: 'Jedi Master. Wise and powerful.',
       profilePicture: 'https://example.com/yoda.jpg',
+      media: {
+        create: [
+          {
+            url: 'https://example.com/yoda_profile.jpg',
+            type: MediaType.PROFILE_PICTURE,
+          }
+        ]
+      },
       posts: {
         create: [
           {
@@ -158,7 +213,7 @@ async function main() {
               create: [
                 {
                   url: 'https://example.com/yoda_post1_media1.jpg',
-                  type: 'image',
+                  type: MediaType.POST_PICTURE,
                   userId: 4,
                 },
               ],
@@ -167,18 +222,32 @@ async function main() {
         ],
       },
     },
+    include: {
+      media: true,
+      posts: {
+        include: {
+          media: true
+        }
+      }
+    }
   });
 
-  const vader = await prisma.user.upsert({
-    where: { email: 'vader@empire.com' },
-    update: {},
-    create: {
+  const vader = await prisma.user.create({
+    data: {
       username: 'darth_vader',
       email: 'vader@empire.com',
       password: 'dark456',
       name: 'Darth Vader',
       bio: 'Dark Lord of the Sith. Formerly Anakin Skywalker.',
       profilePicture: 'https://example.com/vader.jpg',
+      media: {
+        create: [
+          {
+            url: 'https://example.com/vader_profile.jpg',
+            type: MediaType.PROFILE_PICTURE,
+          }
+        ]
+      },
       posts: {
         create: [
           {
@@ -188,8 +257,8 @@ async function main() {
               create: [
                 {
                   url: 'https://example.com/vader_post1_media1.jpg',
-                  type: 'image',
-                  userId: 5, 
+                  type: MediaType.POST_PICTURE,
+                  userId: 5,
                 },
               ],
             },
@@ -197,94 +266,17 @@ async function main() {
         ],
       },
     },
+    include: {
+      media: true,
+      posts: {
+        include: {
+          media: true
+        }
+      }
+    }
   });
 
-  // Fetch posts to use for comments and likes
-  const posts = await prisma.post.findMany();
-  const lukePost1 = posts[0]; // Luke's first post
-  const leiaPost1 = posts[2]; // Leia's first post
-  const hanPost1 = posts[4]; // Han's first post
-  const yodaPost1 = posts[6]; // Yoda's first post
-  const vaderPost1 = posts[7]; // Vader's first post
-
-  // Create comments
-  await prisma.comment.create({
-    data: {
-      content: 'May the Force be with you, Luke!',
-      post: { connect: { id: lukePost1.id } },
-      user: { connect: { id: leia.id } },
-    },
-  });
-
-  await prisma.comment.create({
-    data: {
-      content: 'Nice work, kid. But don’t get cocky!',
-      post: { connect: { id: lukePost1.id } },
-      user: { connect: { id: han.id } },
-    },
-  });
-
-  await prisma.comment.create({
-    data: {
-      content: 'We’re with you, Leia. For Alderaan!',
-      post: { connect: { id: leiaPost1.id } },
-      user: { connect: { id: luke.id } },
-    },
-  });
-
-  await prisma.comment.create({
-    data: {
-      content: 'The Force is strong with this one.',
-      post: { connect: { id: yodaPost1.id } },
-      user: { connect: { id: luke.id } },
-    },
-  });
-
-  await prisma.comment.create({
-    data: {
-      content: 'I find your lack of faith disturbing.',
-      post: { connect: { id: vaderPost1.id } },
-      user: { connect: { id: han.id } },
-    },
-  });
-
-  // Create likes
-  await prisma.like.create({
-    data: {
-      post: { connect: { id: lukePost1.id } },
-      user: { connect: { id: leia.id } },
-    },
-  });
-
-  await prisma.like.create({
-    data: {
-      post: { connect: { id: lukePost1.id } },
-      user: { connect: { id: han.id } },
-    },
-  });
-
-  await prisma.like.create({
-    data: {
-      post: { connect: { id: leiaPost1.id } },
-      user: { connect: { id: luke.id } },
-    },
-  });
-
-  await prisma.like.create({
-    data: {
-      post: { connect: { id: yodaPost1.id } },
-      user: { connect: { id: luke.id } },
-    },
-  });
-
-  await prisma.like.create({
-    data: {
-      post: { connect: { id: vaderPost1.id } },
-      user: { connect: { id: han.id } },
-    },
-  });
-
-  // Create followers and following relationships
+  // Create social connections
   await prisma.user.update({
     where: { id: luke.id },
     data: {
@@ -345,12 +337,60 @@ async function main() {
     },
   });
 
-  console.log({ luke, leia, han, yoda, vader });
+  // Create interactions
+  const posts = await prisma.post.findMany({
+    include: {
+      media: true
+    }
+  });
+
+  await prisma.comment.createMany({
+    data: [
+      {
+        content: 'May the Force be with you, Luke!',
+        postId: posts[0].id,
+        userId: leia.id,
+      },
+      {
+        content: 'Nice work, kid. But don\'t get cocky!',
+        postId: posts[0].id,
+        userId: han.id,
+      },
+      {
+        content: 'We\'re with you, Leia. For Alderaan!',
+        postId: posts[2].id,
+        userId: luke.id,
+      },
+      {
+        content: 'The Force is strong with this one.',
+        postId: posts[6].id,
+        userId: luke.id,
+      },
+      {
+        content: 'I find your lack of faith disturbing.',
+        postId: posts[7].id,
+        userId: han.id,
+      },
+    ],
+  });
+
+  await prisma.like.createMany({
+    data: [
+      { postId: posts[0].id, userId: leia.id },
+      { postId: posts[0].id, userId: han.id },
+      { postId: posts[2].id, userId: luke.id },
+      { postId: posts[6].id, userId: luke.id },
+      { postId: posts[7].id, userId: han.id },
+    ],
+  });
+
+  console.log('Database seeded successfully!');
+  console.log('Created users:', { luke, leia, han, yoda, vader });
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error('Seeding error:', e);
     process.exit(1);
   })
   .finally(async () => {
