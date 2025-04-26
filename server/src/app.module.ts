@@ -17,6 +17,7 @@ import { LikeModule } from './modules/like/like.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { MediaModule } from './modules/media/media.module';
 import { UploadModule } from './modules/upload/upload.module';
+import { MinioModule } from './modules/minio/minio.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { UploadModule } from './modules/upload/upload.module';
     CommentModule,
     MediaModule,
     UploadModule,
+    MinioModule,
   ],
   providers: [
     {
