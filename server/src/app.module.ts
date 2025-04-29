@@ -9,21 +9,21 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { CacheManagerModule } from './modules/cache/cache.module';
 import { AuthModule } from './modules/auth/auth.module';
-import config from './common/config/config'
+import config from './common/config/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './modules/auth/guards/jwt-auth.guard';
 import { JwtStrategy } from './modules/auth/strategy/jwt.strategy';
 import { LikeModule } from './modules/like/like.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { MediaModule } from './modules/media/media.module';
-import { UploadModule } from './modules/upload/upload.module';
+import { FileManagerModule } from './modules/file-manager/file-manager.module';
 import { MinioModule } from './modules/minio/minio.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [config]
+      load: [config],
     }),
     CacheManagerModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -39,13 +39,13 @@ import { MinioModule } from './modules/minio/minio.module';
     LikeModule,
     CommentModule,
     MediaModule,
-    UploadModule,
+    FileManagerModule,
     MinioModule,
   ],
   providers: [
     {
       provide: APP_GUARD,
-      useClass: JwtGuard
+      useClass: JwtGuard,
     },
     JwtStrategy,
   ],
