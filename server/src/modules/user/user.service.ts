@@ -1,13 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcryptjs';
 import { CreateUserInput } from './dto/create-user.input';
 import { Prisma, User } from '@prisma/client';
 import { GetFilterUserInput } from './dto/get-filter-user.input';
+import { FileManagerService } from '../file-manager/file-manager.service';
+import { EditUserInput } from './dto/update-user.input';
+import { UploadUserProfilePic } from './dto/upload-user-pic.input';
 
 @Injectable()
 export class UserService {
-  constructor(private repository: UserRepository) {}
+  constructor(
+    private repository: UserRepository,
+    private fileManagerService: FileManagerService,
+  ) {}
 
   async getUser(userInfo) {
     const user = await this.repository.getUser({ where: userInfo });
@@ -24,17 +34,44 @@ export class UserService {
     return users;
   }
 
-  async editUser(params: { userId: number; username?: string }) {
-    const { userId, ...rest } = params;
-    const updatedUser = await this.repository.updateUser({
+  async editUser(params: { userId: number } & EditUserInput): Promise<User> {
+    const { userId, password, username, ...rest } = params;
+
+    const existingUser = await this.repository.getUser({
       where: { id: userId },
-      data: {
-        // to-do ...
-        updatedAt: new Date(),
-      },
     });
 
-    return updatedUser;
+    if (!existingUser) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    const updateData: Prisma.UserUpdateInput = {
+      ...rest,
+      updatedAt: new Date(),
+    };
+
+    if (username && username !== existingUser.username) {
+      const usernameExists = await this.repository.getUser({
+        where: { username },
+      });
+
+      if (usernameExists) {
+        throw new ConflictException('Username already in use');
+      }
+      updateData.username = username;
+    }
+
+    if (password) {
+      updateData.password = await bcrypt.hash(password, 10);
+    }
+
+    const updatedUser = await this.repository.updateUser({
+      where: { id: userId },
+      data: updateData,
+    });
+
+    const { password: _, ...safeUser } = updatedUser;
+    return safeUser as User;
   }
 
   async deleteUser(params: { userId: number }) {
@@ -126,5 +163,33 @@ export class UserService {
     } catch (e) {
       throw new NotFoundException('No matching users!');
     }
+  }
+
+  async updateUserProfilePic(
+    currentUserUsername: string,
+    uploadUserProfilePic: UploadUserProfilePic,
+  ): Promise<User> {
+    const currentUser = await this.getUser({
+      username: currentUserUsername,
+    });
+
+    if (!currentUser) {
+      throw new NotFoundException('User not found');
+    }
+    try {
+      await this.fileManagerService.getFile(uploadUserProfilePic.s3url);
+    } catch (e) {
+      throw new NotFoundException(
+        'No picture found! Please reupload the image',
+      );
+    }
+    const updateData: EditUserInput = {
+      profilePicture: uploadUserProfilePic.s3url,
+    };
+
+    return this.editUser({
+      userId: currentUser.id,
+      ...updateData,
+    });
   }
 }

@@ -6,6 +6,7 @@ import { IsPublic } from 'src/common/decorator/public.decorator';
 import { CurrentUser } from 'src/common/decorator/user.decorator';
 import { GetFollowerInput } from './dto/get-follower.input';
 import { GetFilterUserInput } from './dto/get-filter-user.input';
+import { UploadUserProfilePic } from './dto/upload-user-pic.input';
 
 @Resolver()
 export class UserResolver {
@@ -35,6 +36,14 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  async uploadUserProfilePic(
+    @Args('uploadUserProfilePic') uploadUserProfilePic: UploadUserProfilePic,
+    @CurrentUser() user: User,
+  ) {
+    return this.userService.updateUserProfilePic(user.username, uploadUserProfilePic);
+  }
+
+  @Mutation(() => User)
   async followUser(
     @Args('getFollowerInput') getFollowerInput: GetFollowerInput,
     @CurrentUser() user: User,
@@ -60,6 +69,6 @@ export class UserResolver {
   async filterUsers(
     @Args('getFilterUserInput') getFilterUserInput: GetFilterUserInput,
   ) {
-    return this.userService.getUsersWithFilters(getFilterUserInput)
+    return this.userService.getUsersWithFilters(getFilterUserInput);
   }
 }
