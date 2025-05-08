@@ -7,6 +7,7 @@ import { CurrentUser } from 'src/common/decorator/user.decorator';
 import { GetFollowerInput } from './dto/get-follower.input';
 import { GetFilterUserInput } from './dto/get-filter-user.input';
 import { UploadUserProfilePic } from './dto/upload-user-pic.input';
+import { EditUserInput } from './dto/update-user.input';
 
 @Resolver()
 export class UserResolver {
@@ -36,11 +37,11 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  async uploadUserProfilePic(
-    @Args('uploadUserProfilePic') uploadUserProfilePic: UploadUserProfilePic,
+  async editUser(
+    @Args('editUserInput') editUserInput: EditUserInput,
     @CurrentUser() user: User,
   ) {
-    return this.userService.updateUserProfilePic(user.username, uploadUserProfilePic);
+    return this.userService.updateUser(user.username, editUserInput);
   }
 
   @Mutation(() => User)

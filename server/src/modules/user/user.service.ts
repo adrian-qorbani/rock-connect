@@ -165,9 +165,9 @@ export class UserService {
     }
   }
 
-  async updateUserProfilePic(
+  async updateUser(
     currentUserUsername: string,
-    uploadUserProfilePic: UploadUserProfilePic,
+    editUserInput: EditUserInput,
   ): Promise<User> {
     const currentUser = await this.getUser({
       username: currentUserUsername,
@@ -176,21 +176,10 @@ export class UserService {
     if (!currentUser) {
       throw new NotFoundException('User not found');
     }
-    // BUGGED
-    // try {
-    //   await this.fileManagerService.getFile(uploadUserProfilePic.s3url);
-    // } catch (e) {
-    //   throw new NotFoundException(
-    //     'No picture found! Please reupload the image',
-    //   );
-    // }
-    const updateData: EditUserInput = {
-      profilePicture: uploadUserProfilePic.s3url,
-    };
 
     return this.editUser({
       userId: currentUser.id,
-      ...updateData,
+      ...editUserInput,
     });
   }
 }
