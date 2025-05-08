@@ -7,10 +7,7 @@ export class FileManagerService {
   constructor(private minioClientService: MinioClientService) {}
 
   async uploadImage(image: BufferedFile) {
-    console.log("initing image upload ....")
-
     const uploaded_image = await this.minioClientService.upload(image);
-
     return {
       image_url: uploaded_image.url,
       message: 'Image upload successful',

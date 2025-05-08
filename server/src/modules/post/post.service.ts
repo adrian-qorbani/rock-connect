@@ -72,9 +72,7 @@ export class PostService {
     postUuid: Post['uuid'];
     username: User['username'];
   }) {
-    console.log('init');
     const { postUuid, username } = params;
-    console.log('init with:', `${postUuid} and ${username}`);
     const updatePostLike = await this.likeService.addOrRemoveLike(
       postUuid,
       username,

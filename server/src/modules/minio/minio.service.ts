@@ -60,7 +60,6 @@ export class MinioClientService {
     file: BufferedFile,
     bucketName: string = this.bucketName,
   ) {
-    console.log('uploading ....');
     if (!(file.mimetype.includes('jpeg') || file.mimetype.includes('png'))) {
       throw new HttpException(
         'File type not supported',
