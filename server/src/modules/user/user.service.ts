@@ -176,13 +176,14 @@ export class UserService {
     if (!currentUser) {
       throw new NotFoundException('User not found');
     }
-    try {
-      await this.fileManagerService.getFile(uploadUserProfilePic.s3url);
-    } catch (e) {
-      throw new NotFoundException(
-        'No picture found! Please reupload the image',
-      );
-    }
+    // BUGGED
+    // try {
+    //   await this.fileManagerService.getFile(uploadUserProfilePic.s3url);
+    // } catch (e) {
+    //   throw new NotFoundException(
+    //     'No picture found! Please reupload the image',
+    //   );
+    // }
     const updateData: EditUserInput = {
       profilePicture: uploadUserProfilePic.s3url,
     };

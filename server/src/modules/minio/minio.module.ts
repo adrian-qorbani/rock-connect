@@ -1,28 +1,24 @@
 import { Global, Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { MINIO_TOKEN } from 'src/common/decorator/minio.decorator';
-import * as Minio from 'minio';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MinioModule } from 'nestjs-minio-client';
+import { MinioClientService } from './minio.service';
 
 @Global()
 @Module({
-  exports: [MINIO_TOKEN],
-  providers: [
-    {
+  imports: [
+    MinioModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        endPoint: configService.getOrThrow('MINIO_ENDPOINT'),
+        port: parseInt(configService.getOrThrow('MINIO_PORT')),
+        useSSL: false,
+        accessKey: configService.getOrThrow('MINIO_ACCESS_KEY'),
+        secretKey: configService.getOrThrow('MINIO_SECRET_KEY'),
+      }),
       inject: [ConfigService],
-      provide: MINIO_TOKEN,
-      useFactory: async (
-        configService: ConfigService,
-      ): Promise<Minio.Client> => {
-        const client = new Minio.Client({
-          endPoint: configService.getOrThrow('MINIO_ENDPOINT'),
-          port: +configService.getOrThrow('MINIO_PORT'),
-          accessKey: configService.getOrThrow('MINIO_ACCESS_KEY'),
-          secretKey: configService.getOrThrow('MINIO_SECRET_KEY'),
-          useSSL: false,
-        });
-        return client;
-      },
-    },
+    }),
   ],
+  providers: [MinioClientService],
+  exports: [MinioClientService],
 })
-export class MinioModule {}
+export class MinioClientModule {}

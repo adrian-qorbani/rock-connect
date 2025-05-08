@@ -1,43 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto';
-import * as Minio from 'minio';
-import { InjectMinio } from 'nestjs-minio';
+import { MinioClientService } from '../minio/minio.service';
+import { BufferedFile } from '../minio/model/file.model';
 
 @Injectable()
 export class FileManagerService {
-  protected _bucketName = 'media';
+  constructor(private minioClientService: MinioClientService) {}
 
-  constructor(@InjectMinio() private readonly minioService: Minio.Client) {}
+  async uploadImage(image: BufferedFile) {
+    console.log("initing image upload ....")
 
-  async bucketsList() {
-    console.log("list goes:")
-    return await this.minioService.listBuckets();
-  }
+    const uploaded_image = await this.minioClientService.upload(image);
 
-  async getFile(filename: string) {
-    return await this.minioService.presignedUrl(
-      'GET',
-      this._bucketName,
-      filename,
-    );
-  }
-
-  uploadFile(file: Express.Multer.File) {
-    return new Promise((resolve, reject) => {
-      const filename = `${randomUUID().toString()}-${file.originalname}`;
-      this.minioService.putObject(
-        this._bucketName,
-        filename,
-        file.buffer,
-        file.size,
-        (error, objInfo) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(objInfo);
-          }
-        },
-      );
-    });
+    return {
+      image_url: uploaded_image.url,
+      message: 'Image upload successful',
+    };
   }
 }

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { FileManagerService } from './file-manager.service';
 import { FileManagerController } from './file-manager.controller';
-import { MinioModule } from '../minio/minio.module';
+import { MinioClientModule } from '../minio/minio.module';
 
 @Module({
-  imports: [MinioModule],
+  imports: [MinioClientModule],
   providers: [FileManagerService],
-  controllers: [FileManagerController]
+  controllers: [FileManagerController],
 })
 export class FileManagerModule {}

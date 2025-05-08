@@ -17,7 +17,7 @@ import { LikeModule } from './modules/like/like.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { MediaModule } from './modules/media/media.module';
 import { FileManagerModule } from './modules/file-manager/file-manager.module';
-import { MinioModule } from './modules/minio/minio.module';
+import { MinioClientModule } from './modules/minio/minio.module';
 
 @Module({
   imports: [
@@ -40,7 +40,7 @@ import { MinioModule } from './modules/minio/minio.module';
     CommentModule,
     MediaModule,
     FileManagerModule,
-    MinioModule,
+    MinioClientModule,
   ],
   providers: [
     {
