@@ -6,7 +6,6 @@ import { IsPublic } from 'src/common/decorator/public.decorator';
 import { CurrentUser } from 'src/common/decorator/user.decorator';
 import { GetFollowerInput } from './dto/get-follower.input';
 import { GetFilterUserInput } from './dto/get-filter-user.input';
-import { UploadUserProfilePic } from './dto/upload-user-pic.input';
 import { EditUserInput } from './dto/update-user.input';
 
 @Resolver()

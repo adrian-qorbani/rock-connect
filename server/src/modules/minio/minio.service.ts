@@ -2,14 +2,12 @@ import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { MinioClient, MinioService } from 'nestjs-minio-client';
 import { BufferedFile } from './model/file.model';
 import * as crypto from 'crypto';
-// import { Client } from 'minio';
 
 @Injectable()
 export class MinioClientService {
   constructor(private readonly minio: MinioService) {
     this.logger = new Logger('MinioService');
 
-    // THIS IS THE POLICY
     const policy = {
       Version: '2012-10-17',
       Statement: [
@@ -49,7 +47,6 @@ export class MinioClientService {
       console.log("bucket policy set.")
     } catch (err) {
       this.logger.error('Error setting bucket policy', err);
-      // Handle error or continue without policy if it's not critical
     }
   }
   private readonly logger: Logger;

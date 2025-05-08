@@ -8,15 +8,12 @@ import * as bcrypt from 'bcryptjs';
 import { CreateUserInput } from './dto/create-user.input';
 import { Prisma, User } from '@prisma/client';
 import { GetFilterUserInput } from './dto/get-filter-user.input';
-import { FileManagerService } from '../file-manager/file-manager.service';
 import { EditUserInput } from './dto/update-user.input';
-import { UploadUserProfilePic } from './dto/upload-user-pic.input';
 
 @Injectable()
 export class UserService {
   constructor(
     private repository: UserRepository,
-    private fileManagerService: FileManagerService,
   ) {}
 
   async getUser(userInfo) {
