@@ -45,6 +45,8 @@ Fullstack social media platform connecting music artists and fans, featuring pos
 - [x] Implement Redis for caching
 - [x] Implement data validation and sanitization for all inputs
 - [x] Containerize backend with Docker
+- [x] Implement file upload/retrieval with s3 bucket
+
  
 ### Frontend
 - [x] Set up React + Vite with TypeScript project structure
