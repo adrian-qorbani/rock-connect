@@ -1,3 +1,4 @@
+// src/components/user-profile/UserProfile.tsx
 import React, { useState, useEffect } from "react";
 import {
   Avatar,
@@ -15,61 +16,53 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { Edit, Save, Cancel } from "@mui/icons-material";
-import { useGetCurrentUserQuery } from "../../generated/graphql";
-
-interface Post {
-  id: string;
-  title: string;
-  content: string;
-  image?: string;
-}
-
-interface UserProfileData {
-  username: string;
-  bio?: string;
-  profilePicture?: string;
-}
+import { useCurrentUser } from "../../hooks/graphql/useUserQueries";
+import { useUpdateUser } from "../../hooks/graphql/useUserMutation";
+import { Post } from "../../types/graphql.types";
+// import { formatNumber } from '../../utils/helpers';
 
 const UserProfile: React.FC = () => {
-  const { data, loading, error } = useGetCurrentUserQuery({
-    fetchPolicy: "cache-and-network",
-    context: {
-      credentials: "include",
-    },
-  });
-
+  const { user, loading, error, refetch } = useCurrentUser();
+  const { updateUser, loading: updateLoading } = useUpdateUser();
   const [editMode, setEditMode] = useState(false);
-  const [editedUser, setEditedUser] = useState<UserProfileData>({
+  const [editedUser, setEditedUser] = useState({
     username: "",
     bio: "",
     profilePicture: "",
   });
 
   useEffect(() => {
-    if (data?.getCurrentUser) {
+    if (user) {
       setEditedUser({
-        username: data.getCurrentUser.username,
-        bio: data.getCurrentUser.bio || "",
-        profilePicture: data.getCurrentUser.profilePicture || "",
+        username: user.username,
+        bio: user.bio || "",
+        profilePicture: user.profilePicture || "",
       });
     }
-  }, [data]);
+  }, [user]);
 
-  const handleEdit = () => {
-    setEditMode(true);
-  };
+  const handleEdit = () => setEditMode(true);
 
-  const handleSave = () => {
-    // TODO: Implement mutation to update user
-    setEditMode(false);
+  const handleSave = async () => {
+    try {
+      await updateUser({
+        username: editedUser.username,
+        bio: editedUser.bio,
+        profilePicture: editedUser.profilePicture,
+      });
+      await refetch();
+      setEditMode(false);
+    } catch (err) {
+      console.error("Failed to update user:", err);
+    }
   };
 
   const handleCancel = () => {
-    if (data?.getCurrentUser) {
+    if (user) {
       setEditedUser({
-        username: data.getCurrentUser.username,
-        bio: data.getCurrentUser.bio || "",
-        profilePicture: data.getCurrentUser.profilePicture || "",
+        username: user.username,
+        bio: user.bio || "",
+        profilePicture: user.profilePicture || "",
       });
     }
     setEditMode(false);
@@ -80,10 +73,6 @@ const UserProfile: React.FC = () => {
     setEditedUser((prev) => ({ ...prev, [name]: value }));
   };
 
-  const formatNumber = (num: number): string => {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
-
   if (loading) return <CircularProgress />;
   if (error)
     return (
@@ -91,28 +80,11 @@ const UserProfile: React.FC = () => {
         Error loading profile: {error.message}
       </Typography>
     );
-
-  const user = data?.getCurrentUser;
   if (!user) return <Typography>User not found</Typography>;
-
-  // Use actual posts from the user data
-  const userPosts: Post[] =
-    user.posts?.map((post) => ({
-      id: Math.random().toString(), // Fallback ID if not available
-      title: post.title,
-      content: post.content,
-      // If you have images in posts, add them here
-      image: "https://source.unsplash.com/random/300x300/?post", // Fallback image - replace with actual post image if available
-    })) || [];
 
   return (
     <Box sx={{ maxWidth: 800, mx: "auto", p: 3 }}>
-      <Card
-        sx={{
-          border: "none",
-          boxShadow: "none",
-        }}
-      >
+      <Card sx={{ border: "none", boxShadow: "none" }}>
         <CardHeader
           title="User Profile"
           action={
@@ -122,7 +94,11 @@ const UserProfile: React.FC = () => {
               </IconButton>
             ) : (
               <Box>
-                <IconButton onClick={handleSave} color="success">
+                <IconButton
+                  onClick={handleSave}
+                  color="success"
+                  disabled={updateLoading}
+                >
                   <Save />
                 </IconButton>
                 <IconButton onClick={handleCancel} color="error">
@@ -168,7 +144,7 @@ const UserProfile: React.FC = () => {
                     fullWidth
                     label="Bio"
                     name="bio"
-                    value={editedUser.bio || ""}
+                    value={editedUser.bio}
                     onChange={handleChange}
                     margin="normal"
                     multiline
@@ -178,7 +154,7 @@ const UserProfile: React.FC = () => {
                     fullWidth
                     label="Profile Picture URL"
                     name="profilePicture"
-                    value={editedUser.profilePicture || ""}
+                    value={editedUser.profilePicture}
                     onChange={handleChange}
                     margin="normal"
                   />
@@ -194,120 +170,66 @@ const UserProfile: React.FC = () => {
                     </Typography>
                   )}
 
-                  {/* Social Stats */}
-                  <Box
-                    sx={{
-                      display: "flex",
-                      gap: 3,
-                      mt: 2,
-                      "& > div": {
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      },
-                    }}
-                  >
-                    <div>
-                      <Typography variant="h6">
-                        {formatNumber(user.postsCount)}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Posts
-                      </Typography>
-                    </div>
-                    <div>
-                      <Typography variant="h6">
-                        {formatNumber(user.followersCount)}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Followers
-                      </Typography>
-                    </div>
-                    <div>
-                      <Typography variant="h6">
-                        {formatNumber(user.followingCount)}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Following
-                      </Typography>
-                    </div>
+                  <Box sx={{ display: "flex", gap: 3, mt: 2 }}>
+                    <StatItem value={user.postsCount ?? 0} label="Posts" />
+                    <StatItem
+                      value={user.followersCount ?? 0}
+                      label="Followers"
+                    />
+                    <StatItem
+                      value={user.followingCount ?? 0}
+                      label="Following"
+                    />
                   </Box>
-                  <Typography marginTop={2}>
-                    placerholder bio
-                  </Typography>
                 </>
               )}
             </Box>
           </Box>
 
-          {/* Posts Grid */}
-          {!editMode && userPosts.length > 0 && (
+          {!editMode && (
             <>
               <Divider sx={{ my: 3 }} />
               <Typography variant="h6" gutterBottom>
                 Posts
               </Typography>
-              <ImageList cols={3} gap={8}>
-                {userPosts.map((post) => (
-                  <ImageListItem key={post.id}>
-                    <img
-                      src={post.image}
-                      alt={post.title}
-                      loading="lazy"
-                      style={{
-                        borderRadius: 8,
-                        width: "100%",
-                        aspectRatio: "1/1",
-                        objectFit: "cover",
-                      }}
-                    />
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        p: 1,
-                        background: "rgba(0, 0, 0, 0.5)",
-                        color: "white",
-                      }}
-                    >
-                      <Typography variant="subtitle2">{post.title}</Typography>
-                    </Box>
-                  </ImageListItem>
-                ))}
-              </ImageList>
+              {user.posts && user.posts.length > 0 ? (
+                <ImageList cols={3} gap={8}>
+                  {user.posts.map((post) => (
+                    <PostItem key={post.id} post={post} />
+                  ))}
+                </ImageList>
+              ) : (
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  sx={{ mt: 2 }}
+                >
+                  No posts yet.
+                </Typography>
+              )}
             </>
           )}
 
-          {!editMode && userPosts.length === 0 && (
-            <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
-              No posts yet.
-            </Typography>
-          )}
-
-          <Divider sx={{ my: 3 }} />
-
           {editMode && (
-            <Box sx={{ textAlign: "right" }}>
-              <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-                <Button
-                  variant="outlined"
-                  color="error"
-                  startIcon={<Cancel />}
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant="contained"
-                  color="success"
-                  startIcon={<Save />}
-                  onClick={handleSave}
-                >
-                  Save Changes
-                </Button>
-              </Box>
+            <Box sx={{ textAlign: "right", mt: 3 }}>
+              <Button
+                variant="outlined"
+                color="error"
+                startIcon={<Cancel />}
+                onClick={handleCancel}
+                sx={{ mr: 2 }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                color="success"
+                startIcon={<Save />}
+                onClick={handleSave}
+                disabled={updateLoading}
+              >
+                {updateLoading ? "Saving..." : "Save Changes"}
+              </Button>
             </Box>
           )}
         </CardContent>
@@ -315,5 +237,46 @@ const UserProfile: React.FC = () => {
     </Box>
   );
 };
+
+const StatItem: React.FC<{ value: number; label: string }> = ({
+  value,
+  label,
+}) => (
+  <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+    {/* <Typography variant="h6">{formatNumber(value)}</Typography> */}
+    <Typography variant="body2" color="text.secondary">
+      {label}
+    </Typography>
+  </Box>
+);
+
+const PostItem: React.FC<{ post: Post }> = ({ post }) => (
+  <ImageListItem>
+    <img
+      src={post.image || "https://source.unsplash.com/random/300x300/?post"}
+      alt={post.title}
+      loading="lazy"
+      style={{
+        borderRadius: 8,
+        width: "100%",
+        aspectRatio: "1/1",
+        objectFit: "cover",
+      }}
+    />
+    <Box
+      sx={{
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        p: 1,
+        background: "rgba(0, 0, 0, 0.5)",
+        color: "white",
+      }}
+    >
+      <Typography variant="subtitle2">{post.title}</Typography>
+    </Box>
+  </ImageListItem>
+);
 
 export default UserProfile;

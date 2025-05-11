@@ -1,3 +1,4 @@
+// src/components/feed/Feed.tsx
 import {
   Table,
   TableBody,
@@ -5,86 +6,87 @@ import {
   TableContainer,
   TableRow,
   Paper,
+  Box,
+  Typography,
+  CircularProgress,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useGetCurrentUserFeedPostsQuery } from "../../generated/graphql";
+import { useFeedPosts } from "../../hooks/graphql/usePostQueries";
+// import { formatDate } from "../../utils/helpers";
 
-interface Post {
-  id: number;
-  title: string;
-  author: string;
-  createdAt: string;
-  content: string;
-  userId: number;
-}
-
-const FeedRoute: React.FC = () => {
-  const { data, loading, error } = useGetCurrentUserFeedPostsQuery({
-    fetchPolicy: "cache-and-network",
-    context: {
-      credentials: "include",
-    },
-  });
+const Feed: React.FC = () => {
+  const { posts, loading, error } = useFeedPosts();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (error) {
-    return <div>Error loading posts: {error.message}</div>;
+    return (
+      <Box sx={{ p: 3, color: "error.main" }}>
+        <Typography>Error loading posts: {error.message}</Typography>
+      </Box>
+    );
   }
-
-  const posts: Post[] =
-    data?.getCurrentUserFeedPosts?.map((post) => ({
-      id: post.id,
-      title: post.title,
-      author: post.user.username,
-      createdAt: post.createdAt,
-      content: post.content,
-      userId: post.userId,
-    })) || [];
 
   if (posts.length === 0) {
     return (
-      <div style={{ padding: "20px", textAlign: "center" }}>
-        <h2>Your Feed</h2>
-        <p>No posts available. Follow some users to see their posts!</p>
-      </div>
+      <Box sx={{ p: 3, textAlign: "center" }}>
+        <Typography variant="h5" gutterBottom>
+          Your Feed
+        </Typography>
+        <Typography>
+          No posts available. Follow some users to see their posts!
+        </Typography>
+      </Box>
     );
   }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Your Feed</h2>
-      <TableContainer component={Paper}>
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h4" gutterBottom>
+        Your Feed
+      </Typography>
+      <TableContainer component={Paper} elevation={3}>
         <Table>
           <TableBody>
             {posts.map((post) => (
-              <TableRow key={post.id}>
+              <TableRow key={post.id} hover>
                 <TableCell>
                   <Link
                     to={`/posts/${post.id}`}
-                    style={{ textDecoration: "none" }}
+                    style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    {post.title}
+                    <Typography fontWeight="medium">{post.title}</Typography>
                   </Link>
                 </TableCell>
                 <TableCell>
                   <Link
                     to={`/users/${post.userId}`}
-                    style={{ textDecoration: "none" }}
+                    style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    {post.author}
+                    <Typography color="primary">
+                      @{post.user.username}
+                    </Typography>
                   </Link>
                 </TableCell>
-                <TableCell>{post.createdAt}</TableCell>
+                <TableCell>
+                  <Typography variant="body2" color="text.secondary">
+                    {/* {formatDate(post.createdAt)} */}
+                    {post.createdAt}
+                  </Typography>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-    </div>
+    </Box>
   );
 };
 
-export default FeedRoute;
+export default Feed;

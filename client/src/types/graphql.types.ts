@@ -13,6 +13,18 @@ export interface Post {
   userId: number;
 }
 
+export interface FeedPost {
+  id: number
+  uuid: string
+  createdAt: string
+  updatedAt: string
+  title: string
+  content: string
+  userId: number
+  user: User
+}
+
+
 export interface AuthInput {
   username: string;
   password: string;
@@ -23,16 +35,16 @@ export interface AuthResponse {
 }
 
 export interface User {
-  id?: number;
+  id: number;
   uuid?: string;
   username: string;
   createdAt?: string;
   updatedAt?: string;
   bio?: string;
   profilePicture?: string;
-  posts?: string;
-  followers?: string;
-  following?: string;
+  posts?: [Post];
+  followers?: [User];
+  following?: [User];
   postsCount?: number;
   followersCount?: number;
   followingCount?: number;
@@ -42,6 +54,20 @@ export interface CreateUserInput {
   username: string;
   email: string;
   password: string;
+  bio?: string;
+  profilePicture?: string;
+}
+
+export interface Post {
+  id: number;
+  title: string;
+  content: string;
+  image?: string;
+  createdAt: string;
+}
+
+export interface UpdateUserInput {
+  username?: string;
   bio?: string;
   profilePicture?: string;
 }
