@@ -15,7 +15,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@graphql-codegen/typescript-react-apollo": "^4.3.2",
-    "@mui/icons-material": "^7.0.0",
+    "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.0.0",
     "@types/js-cookie": "^3.0.6",
     "@types/react-router-dom": "^5.3.3",
