@@ -35,7 +35,7 @@ export interface AuthResponse {
 }
 
 export interface User {
-  id: number;
+  id?: number;
   uuid?: string;
   username: string;
   createdAt?: string;
