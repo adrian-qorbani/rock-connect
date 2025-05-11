@@ -19,6 +19,7 @@ import { Edit, Save, Cancel } from "@mui/icons-material";
 import { useCurrentUser } from "../../hooks/graphql/useUserQueries";
 import { useUpdateUser } from "../../hooks/graphql/useUserMutation";
 import { Post } from "../../types/graphql.types";
+import { StatItem } from "../../components/common/StatItem";
 // import { formatNumber } from '../../utils/helpers';
 
 const UserProfile: React.FC = () => {
@@ -171,15 +172,9 @@ const UserProfile: React.FC = () => {
                   )}
 
                   <Box sx={{ display: "flex", gap: 3, mt: 2 }}>
-                    <StatItem value={user.postsCount ?? 0} label="Posts" />
-                    <StatItem
-                      value={user.followersCount ?? 0}
-                      label="Followers"
-                    />
-                    <StatItem
-                      value={user.followingCount ?? 0}
-                      label="Following"
-                    />
+                    <StatItem value={user.postsCount} label="Posts" />
+                    <StatItem value={user.followersCount} label="Followers" />
+                    <StatItem value={user.followingCount} label="Following" />
                   </Box>
                 </>
               )}
@@ -237,18 +232,6 @@ const UserProfile: React.FC = () => {
     </Box>
   );
 };
-
-const StatItem: React.FC<{ value: number; label: string }> = ({
-  value,
-  label,
-}) => (
-  <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-    {/* <Typography variant="h6">{formatNumber(value)}</Typography> */}
-    <Typography variant="body2" color="text.secondary">
-      {label}
-    </Typography>
-  </Box>
-);
 
 const PostItem: React.FC<{ post: Post }> = ({ post }) => (
   <ImageListItem>
