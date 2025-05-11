@@ -1,4 +1,3 @@
-// src/App.tsx
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -6,7 +5,7 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
-import { User } from "./types/types";
+import { User } from "./types/general.types";
 import Home from "./pages/home/Home";
 import Feed from "./pages/feed/Feed";
 import UserConnections from "./pages/user-connections/UserConnections";

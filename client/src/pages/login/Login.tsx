@@ -10,70 +10,64 @@ import {
   Paper,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import {
-  useLoginMutation,
-  useCreateUserMutation,
-} from "../../generated/graphql";
-import Cookies from "js-cookie";
-import { useAuth } from "../../context/AuthContext";
+import { useLogin } from "../../hooks/graphql/useAuthMutations";
+import { useCreateUser } from "../../hooks/graphql/useUserMutation";
+import { validatePassword } from "../../utils/passValidation";
+
+interface LoginFormData {
+  username: string;
+  password: string;
+}
+
+interface RegisterFormData extends LoginFormData {
+  email: string;
+  confirmPassword: string;
+}
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [openSuccess, setOpenSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<RegisterFormData>({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
-
-  const { login } = useAuth();
-  const [loginMutation, { loading: loginLoading }] = useLoginMutation({
-    onCompleted: (data) => {
-      Cookies.set("access_token", data.login.access_token, {
-        expires: 7,
-      });
-      login({ username: formData.username });
-      setOpenSuccess(true);
-      setTimeout(() => navigate("/"), 1500);
-    },
-    onError: (error) => {
-      setErrorMessage(error.message);
-    },
+  const [passwordValidation, setPasswordValidation] = useState({
+    isValid: false,
+    requirements: [] as { met: boolean; text: string }[],
   });
 
-  const [createUser, { loading: createUserLoading }] = useCreateUserMutation({
-    onCompleted: () => {
-      loginMutation({
-        variables: {
-          authInput: {
-            username: formData.username,
-            password: formData.password,
-          },
-        },
-      });
-    },
-    onError: (error) => {
-      setErrorMessage(error.message);
-    },
-  });
+  const {
+    login: loginUser,
+    loading: loginLoading,
+    error: loginError,
+  } = useLogin();
+  const {
+    createUser,
+    loading: registerLoading,
+    error: registerError,
+  } = useCreateUser();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
-    loginMutation({
-      variables: {
-        authInput: {
-          username: formData.username,
-          password: formData.password,
-        },
-      },
-    });
+
+    try {
+      await loginUser({
+        username: formData.username,
+        password: formData.password,
+      });
+      setOpenSuccess(true);
+      setTimeout(() => navigate("/"), 1500);
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Login failed");
+    }
   };
 
-  const handleCreateAccount = (e: React.FormEvent) => {
+  const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
 
@@ -82,42 +76,69 @@ const Login: React.FC = () => {
       return;
     }
 
-    createUser({
-      variables: {
-        createUserInput: {
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-        },
-      },
-    });
+    try {
+      await createUser({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+      });
+      setOpenSuccess(true);
+      setTimeout(() => navigate("/"), 1500);
+    } catch (err) {
+      setErrorMessage(
+        err instanceof Error ? err.message : "Registration failed"
+      );
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "password" && isCreatingAccount) {
+      setPasswordValidation(validatePassword(value));
+    }
   };
 
-  const handleClose = () => {
-    setOpenSuccess(false);
+  const resetForm = () => {
+    setFormData({
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
     setErrorMessage("");
+    setPasswordValidation({
+      isValid: false,
+      requirements: [],
+    });
   };
 
   const toggleCreateAccount = () => {
     setIsCreatingAccount(!isCreatingAccount);
-    setFormData({ username: "", email: "", password: "", confirmPassword: "" });
-    setErrorMessage("");
+    resetForm();
   };
+
+  // Derived states
+  const isLoading = isCreatingAccount ? registerLoading : loginLoading;
+  const error = isCreatingAccount ? registerError : loginError;
+  const isLoginDisabled = !formData.username || !formData.password || isLoading;
+  const isRegisterDisabled =
+    !formData.username ||
+    !formData.email ||
+    !formData.password ||
+    !formData.confirmPassword ||
+    formData.password !== formData.confirmPassword ||
+    (isCreatingAccount && !passwordValidation.isValid);
 
   return (
     <Box
       sx={{
         display: "flex",
-        height: "80vh",
+        minHeight: "100vh",
         flexDirection: { xs: "column", md: "row" },
       }}
     >
-      {/* Left Section - Welcome Content */}
       <Box
         sx={{
           flex: 1,
@@ -126,23 +147,20 @@ const Login: React.FC = () => {
           flexDirection: "column",
           justifyContent: "center",
           textAlign: { xs: "center", md: "left" },
+          bgcolor: "primary.main",
+          color: "primary.contrastText",
         }}
       >
-        <Typography variant="h2" sx={{ fontWeight: "bold", mb: 2 }}>
-          Rock-Connect
+        <Typography variant="h3" sx={{ fontWeight: "bold", mb: 2 }}>
+          {isCreatingAccount ? "Join Us" : "Welcome Back"}
         </Typography>
-        <Typography variant="h5" sx={{ mb: 4 }}>
-          Connect with friends and artists.
+        <Typography variant="h6">
+          {isCreatingAccount
+            ? "Become part of our community"
+            : "Sign in to continue"}
         </Typography>
-        <Box>
-          <Typography>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in
-            dui mauris. Vivamus hendrerit arcu sed erat molestie vehicula.
-          </Typography>
-        </Box>
       </Box>
 
-      {/* Right Section - Form */}
       <Box
         sx={{
           flex: 1,
@@ -161,40 +179,52 @@ const Login: React.FC = () => {
           }}
         >
           <Typography variant="h5" component="h1" align="center" gutterBottom>
-            {isCreatingAccount ? "Create Account" : "Login"}
+            {isCreatingAccount ? "Create Account" : "Sign In"}
           </Typography>
 
-          {errorMessage && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {errorMessage}
+          {(errorMessage || error) && (
+            <Alert
+              severity="error"
+              sx={{ mb: 2 }}
+              onClose={() => setErrorMessage("")}
+            >
+              {errorMessage || error?.message}
             </Alert>
           )}
 
           <Box
             component="form"
             onSubmit={isCreatingAccount ? handleCreateAccount : handleLogin}
+            noValidate
           >
             {isCreatingAccount && (
               <TextField
                 margin="normal"
                 required
                 fullWidth
-                label="Email"
+                id="email"
+                label="Email Address"
                 name="email"
-                type="email"
+                autoComplete="email"
                 value={formData.email}
                 onChange={handleInputChange}
+                sx={{ mb: 2 }}
               />
             )}
+
             <TextField
               margin="normal"
               required
               fullWidth
+              id="username"
               label="Username"
               name="username"
+              autoComplete="username"
               value={formData.username}
               onChange={handleInputChange}
+              sx={{ mb: 2 }}
             />
+
             <TextField
               margin="normal"
               required
@@ -202,54 +232,81 @@ const Login: React.FC = () => {
               name="password"
               label="Password"
               type="password"
+              id="password"
+              autoComplete={
+                isCreatingAccount ? "new-password" : "current-password"
+              }
               value={formData.password}
               onChange={handleInputChange}
+              sx={{ mb: 2 }}
             />
+
             {isCreatingAccount && (
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="confirmPassword"
-                label="Confirm Password"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-              />
+              <>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  type="password"
+                  id="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  sx={{ mb: 1 }}
+                />
+                <Box sx={{ mt: 1, mb: 2 }}>
+                  <Typography variant="caption">
+                    Password Requirements:
+                  </Typography>
+                  <Box component="ul" sx={{ pl: 2, mt: 0.5 }}>
+                    {passwordValidation.requirements.map((req, i) => (
+                      <Box
+                        component="li"
+                        key={i}
+                        sx={{
+                          color: req.met ? "success.main" : "text.secondary",
+                          fontSize: "0.75rem",
+                        }}
+                      >
+                        {req.text}
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
+              </>
             )}
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              size="large"
               disabled={
-                loginLoading ||
-                createUserLoading ||
-                !formData.username ||
-                !formData.password ||
-                (isCreatingAccount &&
-                  (!formData.email ||
-                    formData.password !== formData.confirmPassword))
+                isCreatingAccount ? isRegisterDisabled : isLoginDisabled
               }
+              sx={{ mt: 1, mb: 2 }}
             >
               {isCreatingAccount
-                ? createUserLoading
-                  ? "Creating..."
+                ? isLoading
+                  ? "Creating Account..."
                   : "Create Account"
-                : loginLoading
-                ? "Logging in..."
-                : "Login"}
+                : isLoading
+                ? "Signing In..."
+                : "Sign In"}
             </Button>
+
             <Box textAlign="center">
               <Link
                 component="button"
                 type="button"
                 onClick={toggleCreateAccount}
                 underline="hover"
+                color="inherit"
               >
                 {isCreatingAccount
-                  ? "Already have an account? Login"
-                  : "Don't have an account? Sign Up"}
+                  ? "Already have an account? Sign In"
+                  : "Don't have an account? Create Account"}
               </Link>
             </Box>
           </Box>
@@ -259,14 +316,17 @@ const Login: React.FC = () => {
       <Snackbar
         open={openSuccess}
         autoHideDuration={3000}
-        onClose={handleClose}
+        onClose={() => setOpenSuccess(false)}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
+        <Alert
+          severity="success"
+          sx={{ width: "100%" }}
+          onClose={() => setOpenSuccess(false)}
+        >
           {isCreatingAccount
-            ? "Account created successfully!"
-            : "Login successful!"}{" "}
-          Redirecting...
+            ? "Account created successfully! Redirecting..."
+            : "Login successful! Redirecting..."}
         </Alert>
       </Snackbar>
     </Box>

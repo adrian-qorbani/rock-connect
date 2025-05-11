@@ -1,6 +1,6 @@
 // src/components/UserRoute.tsx
 import React from "react";
-import { User } from "../../types/types";
+import { User } from "../../types/general.types";
 interface UserRouteProps {
   users: User[];
 }
