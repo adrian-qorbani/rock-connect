@@ -86,9 +86,24 @@ const Navbar: React.FC<{ user: User | null }> = ({ user }) => {
             Feed
           </Button>
           {user && (
-            <Button color="inherit" component={Link} to="/profile">
-              Profile
-            </Button>
+            <>
+              <Button color="inherit" component={Link} to="/profile">
+                Profile
+              </Button>
+              <Button
+                color="inherit"
+                component={Link}
+                to="/new-post"
+                sx={{
+                  marginRight: 2,
+                  "&:hover": {
+                    backgroundColor: "rgba(255, 255, 255, 0.08)",
+                  },
+                }}
+              >
+                New Post
+              </Button>
+            </>
           )}
         </Box>
 
