@@ -1,8 +1,9 @@
 import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql';
-import { Comment as CommentDB } from '@prisma/client';
+import { Comment as CommentDB, User as UserDB } from '@prisma/client';
+import { User } from 'src/modules/user/models/user.model';
 
 @ObjectType()
-export class Comment {
+export class CommentModel {
   @Field(() => Int)
   id: CommentDB[`id`];
 
@@ -23,4 +24,7 @@ export class Comment {
 
   @Field(() => Int)
   postId: CommentDB[`postId`];
+
+  @Field(() => User)
+  user: UserDB;
 }

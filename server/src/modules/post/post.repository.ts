@@ -18,43 +18,43 @@ export class PostRepository {
   }
 
   async getFollowingUsersPosts(username: string) {
-    return this.prisma.post.findMany({
+    const posts = await this.prisma.post.findMany({
       where: {
         OR: [
-          {
-            user: {
-              followers: {
-                some: {
-                  username: username,
-                },
-              },
-            },
-          },
-          {
-            user: {
-              username: username,
-            },
-          },
+          { user: { followers: { some: { username } } } },
+          { user: { username } },
         ],
       },
       include: {
         user: {
           select: {
-            username: true
-          }
+            id: true,
+            uuid: true,
+            username: true,
+            profilePicture: true,
+          },
         },
         media: true,
-        likes: true,
+        likes: {
+          include: {
+            user: { select: { id: true, uuid: true, username: true } },
+          },
+        },
         comments: {
           include: {
-            user: true,
+            user: { select: { id: true, uuid: true, username: true } },
           },
         },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: { createdAt: 'desc' },
     });
+
+    return posts.map((post) => ({
+      ...post,
+      // TO-DO: not really optomized. might add another way later.
+      likesCount: post.likes?.length || 0, 
+      commentsCount: post.comments?.length || 0, 
+    }));
   }
 
   async getPost(params: {

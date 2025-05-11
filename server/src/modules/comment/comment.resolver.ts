@@ -1,6 +1,6 @@
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { CommentService } from './comment.service';
-import { Comment } from './models/comment.model';
+import { CommentModel } from './models/comment.model';
 import { CreateCommentInput } from './dto/create-comment.input';
 import { CurrentUser } from 'src/common/decorator/user.decorator';
 import { User } from '@prisma/client';
@@ -10,7 +10,7 @@ import { GetCommentsByInput } from './dto/get-comments.input';
 export class CommentResolver {
   constructor(private readonly commentService: CommentService) {}
 
-  @Query(() => [Comment])
+  @Query(() => [CommentModel])
   async getComments(
     @Args('getCommentInput') getCommentInput: GetCommentsByInput,
   ) {
@@ -20,7 +20,7 @@ export class CommentResolver {
     });
   }
 
-  @Mutation(() => Comment)
+  @Mutation(() => CommentModel)
   async createComment(
     @Args('createCommentInput') createCommentInput: CreateCommentInput,
     @CurrentUser() user: User,

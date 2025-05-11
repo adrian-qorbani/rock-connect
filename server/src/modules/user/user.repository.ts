@@ -36,6 +36,7 @@ export class UserRepository {
 
         return {
           ...user,
+          // TO-DO: not really optomized. might add another way later.
           postsCount: user.posts.length,
           followersCount: user.followers.length,
           followingCount: user.following.length,

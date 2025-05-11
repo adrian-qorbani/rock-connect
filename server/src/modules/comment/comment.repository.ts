@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, Post, Comment } from '@prisma/client';
+import { Prisma, Comment } from '@prisma/client';
 import { PrismaService } from 'src/database/prisma.service';
-import { Comment as CommentModel } from './models/comment.model';
 
 @Injectable()
 export class CommentRepository {
@@ -20,7 +19,7 @@ export class CommentRepository {
 
   async createComment(params: {
     data: Prisma.CommentCreateInput;
-  }): Promise<CommentModel> {
+  }): Promise<Comment> {
     const { data } = params;
     return this.prisma.comment.create({ data });
   }
