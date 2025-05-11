@@ -17,16 +17,25 @@ export class PostRepository {
     return this.prisma.post.findMany({ skip, take, cursor, where, orderBy });
   }
 
-  async getFollowingUsersPosts(username) {
+  async getFollowingUsersPosts(username: string) {
     return this.prisma.post.findMany({
       where: {
-        user: {
-          followers: {
-            some: {
+        OR: [
+          {
+            user: {
+              followers: {
+                some: {
+                  username: username,
+                },
+              },
+            },
+          },
+          {
+            user: {
               username: username,
             },
           },
-        },
+        ],
       },
       include: {
         user: {
