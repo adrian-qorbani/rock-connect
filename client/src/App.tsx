@@ -7,15 +7,15 @@ import {
   Navigate,
 } from "react-router-dom";
 import { User } from "./types/types";
-import Home from "./components/home/Home";
-import Feed from "./components/feed/Feed";
-import UserConnections from "./components/user-connections/UserConnections";
-import UserProfile from "./components/user-profile/UserProfile";
+import Home from "./pages/home/Home";
+import Feed from "./pages/feed/Feed";
+import UserConnections from "./pages/user-connections/UserConnections";
+import UserProfile from "./pages/user-profile/UserProfile";
 import PostDetail from "./components/post/PostDetail";
-import Login from "./components/login/Login";
-import UserRoute from "./components/user-profile/UserRoute";
-import Navbar from "./components/navbar/Navbar";
-import Footer from "./components/footer/Footer";
+import Login from "./pages/login/Login";
+import UserRoute from "./pages/user-profile/UserRoute";
+import Navbar from "./components/layout/navbar/Navbar";
+import Footer from "./components/layout/footer/Footer";
 import { Box, Container, CssBaseline } from "@mui/material";
 import { useAuth } from "./context/AuthContext";
 import LoadingScreen from "./components/common/LoadingScreen";
