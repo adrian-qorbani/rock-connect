@@ -7,7 +7,7 @@ import Login from "./pages/login/Login";
 import Feed from "./pages/feed/Feed";
 import UserProfile from "./pages/user-profile/UserProfile";
 import Navbar from "./components/layout/navbar/Navbar";
-import { Box } from "@mui/material";
+import { Box, CssBaseline } from "@mui/material";
 
 function App() {
   return (
@@ -24,6 +24,7 @@ function Layout() {
 
   return (
     <>
+      <CssBaseline />
       <Navbar user={user} />
       <Box component="main" sx={{ p: 3 }}>
         <Routes>
