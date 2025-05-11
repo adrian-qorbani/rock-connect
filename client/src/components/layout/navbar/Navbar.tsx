@@ -56,7 +56,7 @@ const Navbar: React.FC<{ user: User | null }> = ({ user }) => {
           </IconButton>
           <Menu
             anchorEl={anchorEl}
-            // open={Boolean(anchorEl)}
+            open={Boolean(anchorEl)}
             onClose={handleMenuClose}
           >
             <MenuItem component={Link} to="/" onClick={handleMenuClose}>
