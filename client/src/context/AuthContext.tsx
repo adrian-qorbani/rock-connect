@@ -16,19 +16,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<{ username: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const client = useApolloClient();
-
+  const hasToken = !!Cookies.get("access_token");
   const { data, error } = useQuery(GetCurrentUserDocument, {
-    skip: !Cookies.get("access_token"),
+    skip: !hasToken,
   });
 
   useEffect(() => {
+    if (!hasToken) {
+      setLoading(false);
+      return;
+    }
+
     if (data?.currentUser) {
       setUser(data.currentUser);
     } else if (error) {
       Cookies.remove("access_token");
     }
     setLoading(false);
-  }, [data, error]);
+  }, [data, error, hasToken]);
 
   const login = (user: { username: string }) => {
     setUser(user);

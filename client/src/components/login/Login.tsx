@@ -28,11 +28,13 @@ const Login: React.FC = () => {
     password: "",
     confirmPassword: "",
   });
-  
+
   const { login } = useAuth();
   const [loginMutation, { loading: loginLoading }] = useLoginMutation({
     onCompleted: (data) => {
-      Cookies.set("access_token", data.login.access_token, { expires: 1 });
+      Cookies.set("access_token", data.login.access_token, {
+        expires: 7,
+      });
       login({ username: formData.username });
       setOpenSuccess(true);
       setTimeout(() => navigate("/"), 1500);

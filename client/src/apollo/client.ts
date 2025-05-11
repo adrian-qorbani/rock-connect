@@ -8,10 +8,12 @@ const graphUrl = import.meta.env.SERVER_GRAPHQL_ENDPOINT;
 
 const httpLink = new HttpLink({
   uri: graphUrl || "http://localhost:3000/graphql",
+  credentials: 'include'
 });
 
 const authLink = setContext((_, { headers }) => {
   const token = Cookies.get("access_token");
+  console.log("tokennnn is", token)
   return {
     headers: {
       ...headers,
@@ -21,7 +23,9 @@ const authLink = setContext((_, { headers }) => {
 });
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
+  console.log("error check")
   if (graphQLErrors) {
+    console.log("error")
     graphQLErrors.forEach(({ message }) => {
       if (message === "Unauthorized" || message.includes("Forbidden")) {
         // Handle token expiration or invalid token

@@ -1,12 +1,12 @@
 // src/App.tsx
-import React, { useState } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Route,
   Routes,
   Navigate,
 } from "react-router-dom";
-import { User, Post } from "./types/types";
+import { User } from "./types/types";
 import Home from "./components/home/Home";
 import Feed from "./components/feed/Feed";
 import UserConnections from "./components/user-connections/UserConnections";
@@ -18,15 +18,23 @@ import Navbar from "./components/navbar/Navbar";
 import Footer from "./components/footer/Footer";
 import { Box, Container, CssBaseline } from "@mui/material";
 import { useAuth } from "./context/AuthContext";
+import LoadingScreen from "./components/common/LoadingScreen";
 
 const App: React.FC = () => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>; 
+    if (loading) {
+      return <LoadingScreen />;
+    }
   }
 
-  const currentUsers: User[] = [
+  const isPublicPage = ["/login", "/"].includes(location.pathname);
+  if (!user && !isPublicPage) {
+    return <Navigate to="/login" replace />;
+  }
+
+  const MOCK_USERS: User[] = [
     { id: "1", username: "John Doe" },
     { id: "2", username: "Jane Smith" },
   ];
@@ -53,7 +61,7 @@ const App: React.FC = () => {
                   <Route path="/posts/:id" element={<PostDetail />} />
                   <Route
                     path="/users/:username"
-                    element={<UserRoute users={currentUsers} />}
+                    element={<UserRoute users={MOCK_USERS} />}
                   />
                   <Route path="/users" element={<UserConnections />} />
                   <Route
