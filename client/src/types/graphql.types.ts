@@ -13,17 +13,31 @@ export interface Post {
   userId: number;
 }
 
-export interface FeedPost {
-  id: number
-  uuid: string
-  createdAt: string
-  updatedAt: string
-  title: string
-  content: string
-  userId: number
-  user: User
-}
+// export interface FeedPost {
+//   id: number
+//   uuid: string
+//   createdAt: string
+//   updatedAt: string
+//   title: string
+//   content: string
+//   userId: number
+//   user: User
+// }
 
+export interface FeedPost {
+  id: number;
+  uuid: string;
+  createdAt: string;
+  updatedAt: string;
+  title: string;
+  content: string;
+  userId: number;
+  user: User;
+  likes: Like[];
+  comments: Comment[];
+  likesCount: number;
+  commentsCount: number;
+}
 
 export interface AuthInput {
   username: string;
@@ -70,4 +84,23 @@ export interface EditUserInput {
   username?: string;
   bio?: string;
   profilePicture?: string;
+}
+
+export interface Like {
+  id: number;
+  createdAt: string;
+  userId: number;
+  postId: number;
+  user: User;
+}
+
+export interface Comment {
+  id: number;
+  uuid: string;
+  createdAt: string;
+  updatedAt: string;
+  content: string;
+  userId: number;
+  postId: number;
+  user: User;
 }
