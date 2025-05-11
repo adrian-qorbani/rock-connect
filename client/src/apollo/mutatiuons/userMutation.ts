@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const UPDATE_USER = gql`
-  mutation UpdateUser($updateUserInput: UpdateUserInput!) {
-    updateUser(updateUserInput: $updateUserInput) {
+  mutation EditUser($editUserInput: EditUserInput!) {
+    editUser(editUserInput: $editUserInput) {
       id
       username
       bio

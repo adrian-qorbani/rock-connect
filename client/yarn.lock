@@ -461,6 +461,11 @@
   dependencies:
     regenerator-runtime "^0.14.0"
 
+"@babel/runtime@^7.27.1":
+  version "7.27.1"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.27.1.tgz#9fce313d12c9a77507f264de74626e87fd0dc541"
+  integrity sha512-1x3D2xEk2fRo3PAhwQwu5UubzgiVWSXTBfWpVd2Mx2AzRqJuDJCsgaDVZ7HB5iGzDW1Hl1sWN2mFyKjmR9uAog==
+
 "@babel/template@^7.18.10", "@babel/template@^7.20.7", "@babel/template@^7.25.9", "@babel/template@^7.26.9", "@babel/template@^7.27.0":
   version "7.27.0"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.27.0.tgz#b253e5406cc1df1c57dcd18f11760c2dbf40c0b4"
@@ -1417,12 +1422,12 @@
   resolved "https://registry.yarnpkg.com/@mui/core-downloads-tracker/-/core-downloads-tracker-7.0.0.tgz#9f6a8dae63539e4ff637f325fcb6b4627ea3cf96"
   integrity sha512-/o5yrEV/8JtsuKoMDX3GHbYNDxOVS7Eq6FpHSJ2X6GDr9gCAXd8vaX7LHwYMm5vovf036PISolcyP81a6qvf0w==
 
-"@mui/icons-material@^7.0.0":
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/@mui/icons-material/-/icons-material-7.0.0.tgz#f994fd0967e5671bfe77d6e48dafe64618a486bb"
-  integrity sha512-1coOyY9nmkEURD1WCtR2bE7hKz6GOC+JzTqVQTE/c+wD/5CdUDzcV876phmeWAdxbSV5NI4PNxNwkOAcAnxxjg==
+"@mui/icons-material@^7.1.0":
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/@mui/icons-material/-/icons-material-7.1.0.tgz#c20860d4f2f09160697a3dd353234a802c45b1e9"
+  integrity sha512-1mUPMAZ+Qk3jfgL5ftRR06ATH/Esi0izHl1z56H+df6cwIlCWG66RXciUqeJCttbOXOQ5y2DCjLZI/4t3Yg3LA==
   dependencies:
-    "@babel/runtime" "^7.26.10"
+    "@babel/runtime" "^7.27.1"
 
 "@mui/material@^7.0.0":
   version "7.0.0"

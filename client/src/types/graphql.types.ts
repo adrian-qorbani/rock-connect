@@ -66,7 +66,7 @@ export interface Post {
   createdAt: string;
 }
 
-export interface UpdateUserInput {
+export interface EditUserInput {
   username?: string;
   bio?: string;
   profilePicture?: string;

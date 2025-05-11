@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { CREATE_USER } from "../../apollo/mutatiuons/authMutations";
-import { CreateUserInput, UpdateUserInput, User } from "../../types/graphql.types";
+import { CreateUserInput, EditUserInput, User } from "../../types/graphql.types";
 import { useAuth } from "../../context/AuthContext";
 import { UPDATE_USER } from "../../apollo/mutatiuons/userMutation";
 
@@ -38,13 +38,13 @@ export const useUpdateUser = () => {
   const [mutate, { loading, error }] = useMutation<{ 
     updateUser: User 
   }, { 
-    updateUserInput: UpdateUserInput 
+    editUserInput: EditUserInput 
   }>(UPDATE_USER);
 
-  const updateUser = async (input: UpdateUserInput) => {
+  const updateUser = async (input: EditUserInput) => {
     try {
       const { data } = await mutate({ 
-        variables: { updateUserInput: input } 
+        variables: { editUserInput: input } 
       });
       return data?.updateUser;
     } catch (err) {

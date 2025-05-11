@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   TextField,
@@ -9,10 +9,11 @@ import {
   Typography,
   Paper,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useLogin } from "../../hooks/graphql/useAuthMutations";
 import { useCreateUser } from "../../hooks/graphql/useUserMutation";
 import { validatePassword } from "../../utils/passValidation";
+import { useAuth } from "../../context/AuthContext";
 
 interface LoginFormData {
   username: string;
@@ -26,6 +27,8 @@ interface RegisterFormData extends LoginFormData {
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
   const [openSuccess, setOpenSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
@@ -51,17 +54,29 @@ const Login: React.FC = () => {
     error: registerError,
   } = useCreateUser();
 
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      const from = location.state?.from?.pathname || "/";
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
 
     try {
-      await loginUser({
+      const success = await loginUser({
         username: formData.username,
         password: formData.password,
       });
-      setOpenSuccess(true);
-      setTimeout(() => navigate("/"), 1500);
+
+      if (success) {
+        setOpenSuccess(true);
+        const from = location.state?.from?.pathname || "/";
+        setTimeout(() => navigate(from, { replace: true }), 1500);
+      }
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : "Login failed");
     }
@@ -83,7 +98,8 @@ const Login: React.FC = () => {
         password: formData.password,
       });
       setOpenSuccess(true);
-      setTimeout(() => navigate("/"), 1500);
+      const from = location.state?.from?.pathname || "/";
+      setTimeout(() => navigate(from, { replace: true }), 1500);
     } catch (err) {
       setErrorMessage(
         err instanceof Error ? err.message : "Registration failed"
