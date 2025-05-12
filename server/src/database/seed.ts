@@ -1,391 +1,235 @@
-import { PrismaClient, MediaType } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import * as path from 'path';
+import * as fs from 'fs';
 
 const prisma = new PrismaClient();
+
+// Directory where profile pictures will be stored locally
+const profilePicturesDir = path.join(__dirname, '..', 'public', 'profiles');
+
+// Ensure directory exists
+if (!fs.existsSync(profilePicturesDir)) {
+  fs.mkdirSync(profilePicturesDir, { recursive: true });
+}
 
 async function main() {
   // Clear existing data
   await prisma.like.deleteMany();
   await prisma.comment.deleteMany();
-  await prisma.media.deleteMany();
   await prisma.post.deleteMany();
   await prisma.user.deleteMany();
 
   // Create users with profile pictures and posts
-  const luke = await prisma.user.create({
+  const freddie = await prisma.user.create({
     data: {
-      username: 'luke_skywalker',
-      email: 'luke@jedi.com',
-      password: 'force123',
-      name: 'Luke Skywalker',
-      bio: 'Jedi Master. Farm boy at heart.',
-      profilePicture: 'https://example.com/luke.jpg',
-      media: {
-        create: [
-          {
-            url: 'https://example.com/luke_profile.jpg',
-            type: MediaType.PROFILE_PICTURE,
-          }
-        ]
-      },
+      username: 'freddie_mercury',
+      email: 'freddie@queen.com',
+      password: 'bohemian123',
+      name: 'Freddie Mercury',
+      bio: 'Lead vocalist of Queen. Show must go on!',
+      profilePicture: 'http://localhost:3000/profiles/freddie.jpg',
       posts: {
         create: [
           {
-            title: 'The Force is Strong',
-            content: 'I\'ve been training with Master Yoda. The Force is more powerful than I ever imagined!',
-            media: {
-              create: [
-                {
-                  url: 'https://example.com/luke_post1_media1.jpg',
-                  type: MediaType.POST_PICTURE,
-                  userId: 1,
-                },
-                {
-                  url: 'https://example.com/luke_post1_media2.jpg',
-                  type: MediaType.POST_PICTURE,
-                  userId: 1,
-                },
-              ],
-            },
+            title: 'New Album Coming Soon',
+            content:
+              "Working on some amazing new tracks with the band. Can't wait to share them with you all!",
           },
           {
-            title: 'My New Lightsaber',
-            content: 'Just built my new green lightsaber. It\'s perfect for defending the galaxy!',
-            media: {
-              create: [
-                {
-                  url: 'https://example.com/luke_post2_media1.jpg',
-                  type: MediaType.POST_PICTURE,
-                  userId: 1,
-                },
-              ],
-            },
+            title: 'Live Aid Memories',
+            content:
+              'One of the greatest performances of my life. The energy from the crowd was electrifying!',
           },
         ],
       },
     },
-    include: {
-      media: true,
-      posts: {
-        include: {
-          media: true
-        }
-      }
-    }
   });
 
-  const leia = await prisma.user.create({
+  const david = await prisma.user.create({
     data: {
-      username: 'princess_leia',
-      email: 'leia@rebel.com',
-      password: 'hope456',
-      name: 'Leia Organa',
-      bio: 'Leader of the Rebel Alliance. General and Princess.',
-      profilePicture: 'https://example.com/leia.jpg',
-      media: {
-        create: [
-          {
-            url: 'https://example.com/leia_profile.jpg',
-            type: MediaType.PROFILE_PICTURE,
-          }
-        ]
-      },
+      username: 'david_bowie',
+      email: 'david@bowiemail.com',
+      password: 'ziggy456',
+      name: 'David Bowie',
+      bio: 'Musician, actor, and icon. The chameleon of rock.',
+      profilePicture: 'http://localhost:3000/profiles/david.jpg',
       posts: {
         create: [
           {
-            title: 'Rebel Alliance Update',
-            content: 'The fight against the Empire continues. We need all the help we can get!',
-            media: {
-              create: [
-                {
-                  url: 'https://example.com/leia_post1_media1.jpg',
-                  type: MediaType.POST_PICTURE,
-                  userId: 2,
-                },
-              ],
-            },
+            title: 'New Persona: Ziggy Stardust',
+            content:
+              "Introducing my new alter ego. He's a space oddity like no other!",
           },
           {
-            title: 'Remember Alderaan',
-            content: 'Today we honor those we lost. Alderaan will never be forgotten.',
-            media: {
-              create: [
-                {
-                  url: 'https://example.com/leia_post2_media1.jpg',
-                  type: MediaType.POST_PICTURE,
-                  userId: 2,
-                },
-              ],
-            },
+            title: 'Berlin Trilogy Complete',
+            content:
+              'Just finished recording with Brian Eno. This is some of my most experimental work yet.',
           },
         ],
       },
     },
-    include: {
-      media: true,
-      posts: {
-        include: {
-          media: true
-        }
-      }
-    }
   });
 
-  const han = await prisma.user.create({
+  const stevie = await prisma.user.create({
     data: {
-      username: 'han_solo',
-      email: 'han@falcon.com',
-      password: 'kessel789',
-      name: 'Han Solo',
-      bio: 'Smuggler, Scoundrel, and Captain of the Millennium Falcon.',
-      profilePicture: 'https://example.com/han.jpg',
-      media: {
-        create: [
-          {
-            url: 'https://example.com/han_profile.jpg',
-            type: MediaType.PROFILE_PICTURE,
-          }
-        ]
-      },
+      username: 'stevie_nicks',
+      email: 'stevie@fleetwood.com',
+      password: 'rhiannon789',
+      name: 'Stevie Nicks',
+      bio: 'Singer-songwriter. The mystical queen of rock.',
+      profilePicture: 'http://localhost:3000/profiles/stevie.jpg',
       posts: {
         create: [
           {
-            title: 'Kessel Run Record',
-            content: 'Just made the Kessel Run in less than 12 parsecs. Beat that!',
-            media: {
-              create: [
-                {
-                  url: 'https://example.com/han_post1_media1.jpg',
-                  type: MediaType.POST_PICTURE,
-                  userId: 3,
-                },
-              ],
-            },
+            title: 'New Solo Album',
+            content:
+              'Working on my next solo project while still touring with Fleetwood Mac. So excited!',
           },
           {
-            title: 'Chewie\'s New Bowcaster',
-            content: 'Chewie got a new bowcaster. He\'s unstoppable now!',
-            media: {
-              create: [
-                {
-                  url: 'https://example.com/han_post2_media1.jpg',
-                  type: MediaType.POST_PICTURE,
-                  userId: 3,
-                },
-              ],
-            },
+            title: 'Remembering Christine',
+            content:
+              'My dear friend and bandmate. The music will never be the same without you.',
           },
         ],
       },
     },
-    include: {
-      media: true,
-      posts: {
-        include: {
-          media: true
-        }
-      }
-    }
   });
 
-  // Create additional users
-  const yoda = await prisma.user.create({
+  const jimmy = await prisma.user.create({
     data: {
-      username: 'master_yoda',
-      email: 'yoda@jedi.com',
-      password: 'wisdom123',
-      name: 'Yoda',
-      bio: 'Jedi Master. Wise and powerful.',
-      profilePicture: 'https://example.com/yoda.jpg',
-      media: {
-        create: [
-          {
-            url: 'https://example.com/yoda_profile.jpg',
-            type: MediaType.PROFILE_PICTURE,
-          }
-        ]
-      },
+      username: 'jimmy_page',
+      email: 'jimmy@zeppelin.com',
+      password: 'stairway123',
+      name: 'Jimmy Page',
+      bio: 'Guitarist and producer. Led Zeppelin forever.',
+      profilePicture: 'http://localhost:3000/profiles/jimmy.jpg',
       posts: {
         create: [
           {
-            title: 'The Path to Wisdom',
-            content: 'Patience you must have, my young padawan.',
-            media: {
-              create: [
-                {
-                  url: 'https://example.com/yoda_post1_media1.jpg',
-                  type: MediaType.POST_PICTURE,
-                  userId: 4,
-                },
-              ],
-            },
+            title: 'Reunion Show?',
+            content:
+              'Thinking about getting the band together for one more show. Who would come?',
           },
         ],
       },
     },
-    include: {
-      media: true,
-      posts: {
-        include: {
-          media: true
-        }
-      }
-    }
   });
 
-  const vader = await prisma.user.create({
+  const janis = await prisma.user.create({
     data: {
-      username: 'darth_vader',
-      email: 'vader@empire.com',
-      password: 'dark456',
-      name: 'Darth Vader',
-      bio: 'Dark Lord of the Sith. Formerly Anakin Skywalker.',
-      profilePicture: 'https://example.com/vader.jpg',
-      media: {
-        create: [
-          {
-            url: 'https://example.com/vader_profile.jpg',
-            type: MediaType.PROFILE_PICTURE,
-          }
-        ]
-      },
+      username: 'janis_joplin',
+      email: 'janis@pearl.com',
+      password: 'pieceofmyheart456',
+      name: 'Janis Joplin',
+      bio: 'Blues-rock singer with a voice like no other.',
+      profilePicture: 'http://localhost:3000/profiles/janis.jpg',
       posts: {
         create: [
           {
-            title: 'The Power of the Dark Side',
-            content: 'Join me, and together we can rule the galaxy as father and son.',
-            media: {
-              create: [
-                {
-                  url: 'https://example.com/vader_post1_media1.jpg',
-                  type: MediaType.POST_PICTURE,
-                  userId: 5,
-                },
-              ],
-            },
+            title: 'Woodstock Experience',
+            content:
+              'The energy at this festival is unbelievable. The crowd, the music, the love!',
           },
         ],
       },
     },
-    include: {
-      media: true,
-      posts: {
-        include: {
-          media: true
-        }
-      }
-    }
   });
 
   // Create social connections
   await prisma.user.update({
-    where: { id: luke.id },
+    where: { id: freddie.id },
     data: {
       followers: {
-        connect: [{ id: leia.id }, { id: han.id }, { id: yoda.id }],
+        connect: [{ id: david.id }, { id: stevie.id }, { id: jimmy.id }],
       },
       following: {
-        connect: [{ id: leia.id }, { id: han.id }, { id: yoda.id }],
+        connect: [{ id: david.id }, { id: stevie.id }],
       },
     },
   });
 
   await prisma.user.update({
-    where: { id: leia.id },
+    where: { id: david.id },
     data: {
       followers: {
-        connect: [{ id: luke.id }, { id: han.id }],
+        connect: [{ id: freddie.id }, { id: stevie.id }],
       },
       following: {
-        connect: [{ id: luke.id }, { id: han.id }],
+        connect: [{ id: freddie.id }, { id: janis.id }],
       },
     },
   });
 
   await prisma.user.update({
-    where: { id: han.id },
+    where: { id: stevie.id },
     data: {
       followers: {
-        connect: [{ id: luke.id }, { id: leia.id }],
+        connect: [{ id: freddie.id }, { id: david.id }, { id: janis.id }],
       },
       following: {
-        connect: [{ id: luke.id }, { id: leia.id }],
+        connect: [{ id: freddie.id }, { id: david.id }],
       },
     },
   });
 
   await prisma.user.update({
-    where: { id: yoda.id },
+    where: { id: jimmy.id },
     data: {
       followers: {
-        connect: [{ id: luke.id }],
+        connect: [{ id: freddie.id }],
       },
       following: {
-        connect: [{ id: luke.id }],
+        connect: [{ id: freddie.id }, { id: janis.id }],
       },
     },
   });
 
   await prisma.user.update({
-    where: { id: vader.id },
+    where: { id: janis.id },
     data: {
       followers: {
-        connect: [{ id: han.id }],
+        connect: [{ id: stevie.id }, { id: david.id }],
       },
       following: {
-        connect: [{ id: han.id }],
+        connect: [{ id: stevie.id }],
       },
     },
   });
 
   // Create interactions
-  const posts = await prisma.post.findMany({
-    include: {
-      media: true
-    }
-  });
+  const posts = await prisma.post.findMany();
 
   await prisma.comment.createMany({
     data: [
       {
-        content: 'May the Force be with you, Luke!',
+        content: "Can't wait to hear the new material, Freddie!",
         postId: posts[0].id,
-        userId: leia.id,
+        userId: david.id,
       },
       {
-        content: 'Nice work, kid. But don\'t get cocky!',
+        content: 'You always push boundaries, looking forward to it!',
         postId: posts[0].id,
-        userId: han.id,
+        userId: stevie.id,
       },
       {
-        content: 'We\'re with you, Leia. For Alderaan!',
+        content: 'Ziggy is such an incredible character!',
         postId: posts[2].id,
-        userId: luke.id,
-      },
-      {
-        content: 'The Force is strong with this one.',
-        postId: posts[6].id,
-        userId: luke.id,
-      },
-      {
-        content: 'I find your lack of faith disturbing.',
-        postId: posts[7].id,
-        userId: han.id,
+        userId: freddie.id,
       },
     ],
   });
 
   await prisma.like.createMany({
     data: [
-      { postId: posts[0].id, userId: leia.id },
-      { postId: posts[0].id, userId: han.id },
-      { postId: posts[2].id, userId: luke.id },
-      { postId: posts[6].id, userId: luke.id },
-      { postId: posts[7].id, userId: han.id },
+      { postId: posts[0].id, userId: david.id },
+      { postId: posts[0].id, userId: stevie.id },
+      { postId: posts[2].id, userId: freddie.id },
+      { postId: posts[4].id, userId: david.id },
     ],
   });
 
-  console.log('Database seeded successfully!');
-  console.log('Created users:', { luke, leia, han, yoda, vader });
+  console.log('Database seeded with rock musicians successfully!');
+  console.log('Created users:', { freddie, david, stevie, jimmy, janis });
 }
 
 main()
