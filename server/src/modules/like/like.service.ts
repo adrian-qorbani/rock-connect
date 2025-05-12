@@ -28,29 +28,38 @@ export class LikeService {
   async addOrRemoveLike(
     postUuid: Post['uuid'],
     username: User['username'],
-  ): Promise<Like | null> {
+  ): Promise<Like> {
     const currentPost = await this.postRepository.getPost({
       where: { uuid: postUuid },
     });
+
+    if (!currentPost) {
+      throw new Error('Post not found');
+    }
 
     const currentUser = await this.userRepository.getUser({
       where: { username: username },
     });
 
+    if (!currentUser) {
+      throw new Error('User not found');
+    }
+
     const existingLike = await this.likeRepository.getLikes({
-      where: { postId: currentPost?.id, userId: currentUser?.id },
+      where: { postId: currentPost.id, userId: currentUser.id },
     });
 
     if (existingLike.length) {
+      const likeToDelete = existingLike[0];
       await this.likeRepository.deleteLike({
-        where: { id: existingLike[0].id },
+        where: { id: likeToDelete.id },
       });
-      return null;
+      return likeToDelete;
     } else {
       return this.likeRepository.createLike({
         data: {
-          post: { connect: { id: currentPost?.id } },
-          user: { connect: { id: currentUser?.id } },
+          post: { connect: { id: currentPost.id } },
+          user: { connect: { id: currentUser.id } },
         },
       });
     }
