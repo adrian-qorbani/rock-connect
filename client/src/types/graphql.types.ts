@@ -104,3 +104,15 @@ export interface Comment {
   postId: number;
   user: User;
 }
+
+export interface LikeModel {
+  id: number;
+  createdAt: string;
+  userId: number;
+  postId: number;
+  user: User;
+}
+
+export interface GetToggleLikePostInput {
+  postUuid: string;
+}
