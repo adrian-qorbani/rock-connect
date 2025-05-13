@@ -92,6 +92,11 @@ note: if you want production build, change `target` in docker-compose from `deve
     yarn prisma:seed
 ```
 
+4. Access minio storage and setup a bucket, copy its access key and secret key, use it in env:
+```bash
+    http://localhost:9000
+```
+
 5. Access website at:
 ```bash
     http://localhost:5173
