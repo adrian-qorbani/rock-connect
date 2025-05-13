@@ -50,13 +50,15 @@ Fullstack social media platform connecting music artists and fans, featuring pos
  
 ### Frontend
 - [x] Set up React + Vite with TypeScript project structure
-- [ ] Implement user authentication flow
-- [ ] Create user profile pages
+- [x] Implement user authentication flow
+- [x] Create user profile pages
 - [ ] Build post creation and display components
-- [ ] Add content liking functionality
-- [ ] Integrate with the backend GraphQL API
+- [x] Add content liking functionality
+- [x] Integrate with the backend GraphQL API
 - [ ] Write unit and integration tests
 - [x] Containerize frontend with Docker
+- [ ] Remake UI/UX
+
 
 ### CI/CD
 - [x] Dockerize the whole stack
@@ -81,6 +83,7 @@ note: if you want production build, change `target` in docker-compose from `deve
 
 3. Set up database volumes (if you haven't before):
 ```bash
+    cd server
     yarn prisma:migrate
 ```
 
