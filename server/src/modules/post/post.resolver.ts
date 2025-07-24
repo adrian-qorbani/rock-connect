@@ -20,7 +20,7 @@ export class PostResolver {
     return this.postService.getPosts();
   }
 
-  @Query(() => Post)
+  @Query(() => FeedPost)
   async getSinglePost(
     @Args('singlePostInput') singlePostInput: GetSinglePostInput,
   ) {

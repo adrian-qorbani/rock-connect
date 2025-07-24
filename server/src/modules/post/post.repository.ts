@@ -52,16 +52,47 @@ export class PostRepository {
     return posts.map((post) => ({
       ...post,
       // TO-DO: not really optomized. might add another way later.
-      likesCount: post.likes?.length || 0, 
-      commentsCount: post.comments?.length || 0, 
+      likesCount: post.likes?.length || 0,
+      commentsCount: post.comments?.length || 0,
     }));
   }
 
-  async getPost(params: {
-    where: Prisma.PostWhereInput;
-  }): Promise<Post | null> {
+  async getPost(params: { where: Prisma.PostWhereInput }) {
     const { where } = params;
-    return this.prisma.post.findFirst({ where });
+    const post = await this.prisma.post.findFirst({
+      where,
+      include: {
+        user: {
+          select: {
+            id: true,
+            uuid: true,
+            username: true,
+            profilePicture: true,
+          },
+        },
+        media: true,
+        likes: {
+          include: {
+            user: { select: { id: true, uuid: true, username: true } },
+          },
+        },
+        comments: {
+          include: {
+            user: { select: { id: true, uuid: true, username: true } },
+          },
+        },
+      },
+    });
+
+    if (!post) {
+      throw new Error('Post not found');
+    }
+
+    return {
+      ...post,
+      likesCount: post.likes?.length || 0,
+      commentsCount: post.comments?.length || 0,
+    };
   }
 
   async createPost(params: { data: Prisma.PostCreateInput }): Promise<Post> {
