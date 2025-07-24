@@ -40,7 +40,7 @@ const NewPost: React.FC = () => {
       });
 
       if (createdPost) {
-        navigate(`/posts/${createdPost.id}`);
+        navigate(`/feed`);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create post");

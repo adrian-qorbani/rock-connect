@@ -8,7 +8,6 @@ import {
   Stack,
   IconButton,
   Avatar,
-  Divider,
   Button,
 } from "@mui/material";
 import {
@@ -18,7 +17,7 @@ import {
   Share,
   BookmarkBorder,
 } from "@mui/icons-material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFeedPosts } from "../../hooks/graphql/usePostQueries";
 import { useToggleLike } from "../../hooks/graphql/useLikeMutations";
 import { formatDate } from "../../utils/formatDate";
@@ -28,11 +27,14 @@ const Feed: React.FC = () => {
   const { toggleLike } = useToggleLike();
   const [localLikes, setLocalLikes] = useState<Record<string, boolean>>({});
   const [likeLoading, setLikeLoading] = useState<Record<string, boolean>>({});
+  const navigate = useNavigate();
 
   const handleLikeToggle = async (
     postUuid: string,
-    isCurrentlyLiked: boolean
+    isCurrentlyLiked: boolean,
+    e: React.MouseEvent
   ) => {
+    e.stopPropagation(); // Prevent triggering the post click
     try {
       setLikeLoading((prev) => ({ ...prev, [postUuid]: true }));
       await toggleLike(postUuid);
@@ -48,6 +50,10 @@ const Feed: React.FC = () => {
     } finally {
       setLikeLoading((prev) => ({ ...prev, [postUuid]: false }));
     }
+  };
+
+  const handlePostClick = (postUuid: string) => {
+    navigate(`/posts/${postUuid}`);
   };
 
   if (loading) {
@@ -93,7 +99,18 @@ const Feed: React.FC = () => {
             post.likesCount || (post.likes ? post.likes.length : 0);
 
           return (
-            <Paper key={post.uuid} elevation={2} sx={{ borderRadius: 2 }}>
+            <Paper
+              key={post.uuid}
+              elevation={2}
+              sx={{
+                borderRadius: 2,
+                cursor: "pointer",
+                "&:hover": {
+                  boxShadow: 4,
+                },
+              }}
+              onClick={() => handlePostClick(post.uuid)}
+            >
               <Box sx={{ display: "flex" }}>
                 {/* Like button */}
                 <Box
@@ -106,12 +123,13 @@ const Feed: React.FC = () => {
                     borderTopLeftRadius: 8,
                     borderBottomLeftRadius: 8,
                   }}
+                  onClick={(e) => e.stopPropagation()} // Prevent triggering the post click
                 >
                   <IconButton
                     size="small"
                     color={isLiked ? "error" : "default"}
                     disabled={likeLoading[post.uuid]}
-                    onClick={() => handleLikeToggle(post.uuid, isLiked)}
+                    onClick={(e) => handleLikeToggle(post.uuid, isLiked, e)}
                   >
                     {isLiked ? <Favorite /> : <FavoriteBorder />}
                   </IconButton>
@@ -123,7 +141,10 @@ const Feed: React.FC = () => {
                 {/* Post content */}
                 <Box sx={{ p: 2, flexGrow: 1 }}>
                   {/* Post header */}
-                  <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                  <Box
+                    sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                    onClick={(e) => e.stopPropagation()} // Prevent triggering the post click
+                  >
                     <Avatar
                       src={post.user.profilePicture || "/default-avatar.png"}
                       sx={{ width: 24, height: 24, mr: 1 }}
@@ -133,6 +154,7 @@ const Feed: React.FC = () => {
                       <Link
                         to={`/users/${post.userId}`}
                         style={{ textDecoration: "none", color: "inherit" }}
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <strong>u/{post.user.username}</strong>
                       </Link>{" "}
@@ -141,10 +163,7 @@ const Feed: React.FC = () => {
                   </Box>
 
                   {/* Post title and content */}
-                  <Link
-                    to={`/posts/${post.uuid}`}
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
+                  <Box>
                     <Typography variant="h6" sx={{ mb: 1, fontWeight: "bold" }}>
                       {post.title}
                     </Typography>
@@ -153,23 +172,36 @@ const Feed: React.FC = () => {
                         ? `${post.content.substring(0, 200)}...`
                         : post.content}
                     </Typography>
-                  </Link>
+                  </Box>
 
                   {/* Post actions */}
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box
+                    sx={{ display: "flex", alignItems: "center" }}
+                    onClick={(e) => e.stopPropagation()} // Prevent triggering the post click
+                  >
                     <Button
                       startIcon={<ChatBubbleOutline />}
                       size="small"
                       sx={{ mr: 1 }}
                       component={Link}
                       to={`/posts/${post.uuid}`}
+                      onClick={(e) => e.stopPropagation()}
                     >
                       {post.commentsCount || 0} Comments
                     </Button>
-                    <Button startIcon={<Share />} size="small" sx={{ mr: 1 }}>
+                    <Button
+                      startIcon={<Share />}
+                      size="small"
+                      sx={{ mr: 1 }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       Share
                     </Button>
-                    <Button startIcon={<BookmarkBorder />} size="small">
+                    <Button
+                      startIcon={<BookmarkBorder />}
+                      size="small"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       Save
                     </Button>
                   </Box>

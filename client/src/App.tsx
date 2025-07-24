@@ -9,6 +9,7 @@ import UserProfile from "./pages/user-profile/UserProfile";
 import Navbar from "./components/layout/navbar/Navbar";
 import { Box, CssBaseline } from "@mui/material";
 import NewPost from "./pages/post/NewPost";
+import PostDetail from "./components/post/PostDetail";
 
 function App() {
   return (
@@ -59,6 +60,14 @@ function Layout() {
             element={
               <ProtectedRoute>
                 <NewPost />
+              </ProtectedRoute>
+            }
+          />
+                    <Route
+            path="/posts/:uuid"
+            element={
+              <ProtectedRoute>
+                <PostDetail />
               </ProtectedRoute>
             }
           />
