@@ -151,7 +151,7 @@ const Login: React.FC = () => {
     <Box
       sx={{
         display: "flex",
-        minHeight: "100vh",
+        minHeight: "80vh",
         flexDirection: { xs: "column", md: "row" },
       }}
     >
@@ -168,12 +168,12 @@ const Login: React.FC = () => {
         }}
       >
         <Typography variant="h3" sx={{ fontWeight: "bold", mb: 2 }}>
-          {isCreatingAccount ? "Join Us" : "Welcome Back"}
+          {isCreatingAccount ? "Join Us" : "Welcome To Rock-Connect"}
         </Typography>
         <Typography variant="h6">
           {isCreatingAccount
             ? "Become part of our community"
-            : "Sign in to continue"}
+            : "Create a network with music industry artists and fans."}
         </Typography>
       </Box>
 
