@@ -94,16 +94,31 @@ export interface Like {
   user: User;
 }
 
-export interface Comment {
+// export interface Comment {
+//   id: number;
+//   uuid: string;
+//   createdAt: string;
+//   updatedAt: string;
+//   content: string;
+//   userId: number;
+//   postId: number;
+//   user: User;
+// }
+
+export type Comment = {
   id: number;
   uuid: string;
+  content: string;
   createdAt: string;
   updatedAt: string;
-  content: string;
   userId: number;
   postId: number;
-  user: User;
-}
+  user: {
+    id: number;
+    username: string;
+    profilePicture?: string;
+  };
+};
 
 export interface LikeModel {
   id: number;
@@ -116,3 +131,8 @@ export interface LikeModel {
 export interface GetToggleLikePostInput {
   postUuid: string;
 }
+
+export type CreateCommentInput = {
+  postUuid: string;
+  content: string;
+};
