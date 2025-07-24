@@ -19,6 +19,13 @@ export class PostService {
     return posts;
   }
 
+  async getSinglePost(params: { uuid: Post['uuid'] }) {
+  const { uuid } = params;
+  return this.postRepository.getPost({
+    where: { uuid }
+  });
+}
+
   async getFollowingUsersPosts(params: { username: User['username'] }) {
     const { username } = params;
     return this.postRepository.getFollowingUsersPosts(username);

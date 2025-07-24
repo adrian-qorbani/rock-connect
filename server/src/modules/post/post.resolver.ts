@@ -9,6 +9,7 @@ import { GetToggleLikePostInput } from './dto/get-toggle-like-post.input';
 import { LikeModel } from '../like/models/like.model';
 import { GetFilteredPostsInput } from './dto/get-filter-posts.input';
 import { FeedPost } from './models/feedPost.model';
+import { GetSinglePostInput } from './dto/get-single-post.input';
 
 @Resolver()
 export class PostResolver {
@@ -17,6 +18,15 @@ export class PostResolver {
   @Query(() => [Post])
   async getPosts() {
     return this.postService.getPosts();
+  }
+
+  @Query(() => Post)
+  async getSinglePost(
+    @Args('singlePostInput') singlePostInput: GetSinglePostInput,
+  ) {
+    return this.postService.getSinglePost({
+      uuid: singlePostInput.postUuid,
+    });
   }
 
   @Query(() => [FeedPost])
