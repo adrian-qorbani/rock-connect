@@ -1,13 +1,15 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsUUID } from 'class-validator';
+import { IsOptional, IsUUID } from 'class-validator';
 
 @InputType()
 export class GetCommentsByInput {
   @IsUUID()
+  @IsOptional()
   @Field({ nullable: true })
-  postUuid: string;
+  postUuid?: string;
 
   @IsUUID()
+  @IsOptional()
   @Field({ nullable: true })
-  userUuid: string;
+  userUuid?: string;
 }

@@ -1,108 +1,94 @@
-import React from "react";
+// src/pages/post/PostDetail.tsx
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSinglePost } from "../../hooks/graphql/usePostQueries";
-import {
-  Box,
+import { useToggleLike } from "../../hooks/graphql/useLikeMutations";
+import { 
+  CircularProgress, 
+  Alert, 
   Typography,
-  Paper,
-  Avatar,
-  Divider,
-  Chip,
-  CircularProgress,
-  Alert,
+  IconButton,
+  Box,
   Stack,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
+  Avatar
 } from "@mui/material";
+import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { formatDate } from "../../utils/formatDate";
 
 const PostDetail: React.FC = () => {
   const { uuid } = useParams<{ uuid: string }>();
+  const { post, loading, error, refetch } = useSinglePost(uuid || "");
+  const { toggleLike } = useToggleLike();
+  
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeLoading, setLikeLoading] = useState(false);
 
-  if (!uuid) {
-    return <Alert severity="error">Invalid post path. please try again.</Alert>;
-  }
+  React.useEffect(() => {
+    if (post) {
+      setIsLiked(post.likes?.some(like => like.userId === post.userId) || false);
+    }
+  }, [post]);
 
-  const { post, loading, error } = useSinglePost(uuid);
+  const handleLikeToggle = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!uuid) return;
 
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" my={4}>
-        <CircularProgress />
-      </Box>
-    );
-  }
+    try {
+      setLikeLoading(true);
+      await toggleLike(uuid);
+      
+      setIsLiked(prev => !prev);
+      
+      await refetch();
+    } catch (error) {
+      console.error("Failed to toggle like:", error);
+      setIsLiked(prev => !prev);
+    } finally {
+      setLikeLoading(false);
+    }
+  };
 
-  if (error) {
-    return (
-      <Alert severity="error" sx={{ my: 2 }}>
-        {error.message}
-      </Alert>
-    );
-  }
-
-  if (!post) {
-    return (
-      <Alert severity="warning" sx={{ my: 2 }}>
-        Post not found
-      </Alert>
-    );
-  }
+  if (loading) return <CircularProgress />;
+  if (error) return <Alert severity="error">{error.message}</Alert>;
+  if (!post) return <Typography>Post not found</Typography>;
 
   return (
-    <Paper elevation={3} sx={{ p: 3, my: 3 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        {post.title}
-      </Typography>
-
-      <Stack direction="row" alignItems="center" spacing={2} mb={2}>
+    <Box sx={{ maxWidth: 800, mx: "auto", p: 3 }}>
+      <Stack direction="row" alignItems="center" spacing={2} mb={3}>
         <Avatar src={post.user.profilePicture} alt={post.user.username} />
-        <Typography variant="subtitle1">
-          Posted by {post.user.username}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {formatDate(new Date(post.createdAt))}
+        <Typography variant="h6">{post.user.username}</Typography>
+        <Typography variant="body2" color="text.secondary">
+          {formatDate(post.createdAt)}
         </Typography>
       </Stack>
 
-      <Divider sx={{ my: 2 }} />
+      <Typography variant="h4" gutterBottom>
+        {post.title}
+      </Typography>
 
       <Typography variant="body1" paragraph>
         {post.content}
       </Typography>
 
-      <Stack direction="row" spacing={1} sx={{ my: 2 }}>
-        <Chip label={`${post.likesCount} likes`} color="primary" />
-        <Chip label={`${post.commentsCount} comments`} />
-      </Stack>
+      <Box sx={{ display: "flex", alignItems: "center", mt: 3 }}>
+        <IconButton
+          onClick={handleLikeToggle}
+          disabled={likeLoading}
+          color={isLiked ? "error" : "default"}
+        >
+          {isLiked ? <Favorite /> : <FavoriteBorder />}
+        </IconButton>
+        <Typography variant="body2" sx={{ ml: 1 }}>
+          {post.likesCount} likes
+        </Typography>
 
-      {post.comments && post.comments.length > 0 && (
-        <Box mt={4}>
-          <Typography variant="h6" gutterBottom>
-            Comments
-          </Typography>
-          <List>
-            {post.comments.map((comment) => (
-              <ListItem key={comment.id} alignItems="flex-start">
-                <ListItemAvatar>
-                  <Avatar
-                    src={comment.user.profilePicture}
-                    alt={comment.user.username}
-                  />
-                </ListItemAvatar>
-                <ListItemText
-                  primary={comment.user.username}
-                  secondary={comment.content}
-                  secondaryTypographyProps={{ color: "text.primary" }}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      )}
-    </Paper>
+        <Typography variant="body2" sx={{ ml: 3 }}>
+          {post.commentsCount} comments
+        </Typography>
+      </Box>
+
+      {/* comments section */}
+    </Box>
   );
 };
 

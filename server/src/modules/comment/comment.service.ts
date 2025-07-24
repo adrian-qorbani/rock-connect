@@ -32,7 +32,7 @@ export class CommentService {
     }
 
     const comments = await this.repository.getComments({
-      where,
+      where
     });
 
     return comments;

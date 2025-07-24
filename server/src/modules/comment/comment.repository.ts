@@ -14,7 +14,14 @@ export class CommentRepository {
     orderBy?: Prisma.CommentOrderByWithRelationInput;
   }): Promise<Comment[]> {
     const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.comment.findMany({ skip, take, cursor, where, orderBy });
+    return this.prisma.comment.findMany({
+      skip,
+      take,
+      cursor,
+      where,
+      orderBy,
+      include: { user: true },
+    });
   }
 
   async createComment(params: {
