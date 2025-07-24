@@ -52,17 +52,20 @@ Fullstack social media platform connecting music artists and fans, featuring pos
 - [x] Set up React + Vite with TypeScript project structure
 - [x] Implement user authentication flow
 - [x] Create user profile pages
-- [ ] Build post creation and display components
+- [x] Build post creation and display components
 - [x] Add content liking functionality
 - [x] Integrate with the backend GraphQL API
-- [ ] Write unit and integration tests
 - [x] Containerize frontend with Docker
-- [ ] Remake UI/UX
+- [ ] Write unit and integration tests
+- [ ] revise UI/UX
 
 
 ### CI/CD
 - [x] Dockerize the whole stack
 - [ ] Implement a CI/CD pipeline for automated testing
+
+### MISC
+- [ ] Add extensive Error Handing
 
 ### Development vs. Production
 - **Development**: Runs frontend on `http://localhost:5173` with hot-reloading.
@@ -118,4 +121,4 @@ note: if you want production build, change `target` in docker-compose from `deve
 ```
 
 ## Notice
-This is a portfolio project. If you want to use it for your own commercial project and deployment, make sure are to abide by OWASP [protocols and best practices](https://cheatsheetseries.owasp.org/index.html), as this project isn't that optimized for deployment, so use it at your own risk.
+This is a portfolio project. If you want to use it for your own commercial project and deployment, make sure are to abide by OWASP [protocols and best practices](https://cheatsheetseries.owasp.org/index.html), as this project isn't that optimized for deployment, so use it at your own risk. It also need extensive error handling, as what I made is somewhat limited in scope.
