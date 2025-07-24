@@ -7,6 +7,7 @@ import { CurrentUser } from 'src/common/decorator/user.decorator';
 import { GetFollowerInput } from './dto/get-follower.input';
 import { GetFilterUserInput } from './dto/get-filter-user.input';
 import { EditUserInput } from './dto/update-user.input';
+import { GetNoOfRecentUsers } from './dto/get-no-recent-users.input';
 
 @Resolver()
 export class UserResolver {
@@ -70,5 +71,12 @@ export class UserResolver {
     @Args('getFilterUserInput') getFilterUserInput: GetFilterUserInput,
   ) {
     return this.userService.getUsersWithFilters(getFilterUserInput);
+  }
+
+  @Query(() => [User])
+  async getRecentUsers(
+    @Args('numberOfRecentUsers') numberOfRecentUsers: GetNoOfRecentUsers,
+  ) {
+    return this.userService.getRecentUsers(numberOfRecentUsers);
   }
 }

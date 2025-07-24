@@ -12,9 +12,7 @@ import { EditUserInput } from './dto/update-user.input';
 
 @Injectable()
 export class UserService {
-  constructor(
-    private repository: UserRepository,
-  ) {}
+  constructor(private repository: UserRepository) {}
 
   async getUser(userInfo) {
     const user = await this.repository.getUser({ where: userInfo });
@@ -177,6 +175,17 @@ export class UserService {
     return this.editUser({
       userId: currentUser.id,
       ...editUserInput,
+    });
+  }
+
+  async getRecentUsers(params: { limit: number }) {
+    return this.repository.getRecentUsers({
+      limit: params.limit,
+      include: {
+        posts: true,
+        followers: true,
+        following: true,
+      },
     });
   }
 }

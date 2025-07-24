@@ -84,4 +84,18 @@ export class UserRepository {
       },
     });
   }
+
+  async getRecentUsers(params: {
+    limit: number;
+    include?: Prisma.UserInclude;
+  }): Promise<User[]> {
+    return this.prisma.user
+      .findMany({
+        take: params.limit,
+        orderBy: {
+          createdAt: 'desc',
+        },
+        include: params.include,
+      })
+  }
 }
