@@ -56,7 +56,7 @@ export interface User {
   updatedAt?: string;
   bio?: string;
   profilePicture?: string;
-  posts?: [Post];
+  posts?: [FeedPost];
   followers?: [User];
   following?: [User];
   postsCount?: number;
